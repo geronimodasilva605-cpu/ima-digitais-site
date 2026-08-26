@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#07111f"/>
+<stop offset="100%" stop-color="#075b7d"/>
+</linearGradient>
+</defs>
+
+<rect width="1200" height="700" fill="url(#bg)"/>
+
+<circle cx="180" cy="130" r="100" fill="#00d9ff" opacity="0.15"/>
+<circle cx="1050" cy="570" r="150" fill="#00d9ff" opacity="0.10"/>
+
+<rect x="250" y="100" width="700" height="500"
+rx="30" fill="#0d2035" stroke="#00d9ff" stroke-width="4"/>
+
+<text x="330" y="250"
+font-family="Arial"
+font-size="110"
+font-weight="bold"
+fill="#00d9ff">IMA</text>
+
+<text x="335" y="320"
+font-family="Arial"
+font-size="42"
+fill="white">DESIGN GRÁFICO</text>
+
+<rect x="335" y="365" width="420" height="15"
+rx="8" fill="#31516e"/>
+
+<rect x="335" y="400" width="300" height="15"
+rx="8" fill="#31516e"/>
+
+<circle cx="820" cy="470" r="55"
+fill="#00d9ff"/>
+
+<path d="M790 470 L815 495 L855 445"
+fill="none"
+stroke="#07111f"
+stroke-width="12"
+stroke-linecap="round"
+stroke-linejoin="round"/>
+
+<text x="600" y="555"
+text-anchor="middle"
+font-family="Arial"
+font-size="26"
+fill="#9fb5c9">IDENTIDADE • CRIATIVIDADE • PROFISSIONALISMO</text>
+</svg>
