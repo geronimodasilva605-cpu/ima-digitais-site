@@ -125,8 +125,7 @@ IMA
 <strong>Adicionar membro</strong>
 <small>Registar alguém da equipa</small>
 </button>
-
-<button>
+<button onclick="abrirClientes()">
 💼
 <strong>Novo cliente</strong>
 <small>Adicionar cliente</small>
@@ -181,6 +180,12 @@ cargos e membros da sua equipa.
 
 </main>
 </div>
+
+<script>
+function abrirClientes() {
+    window.location.href = "clientes.html";
+}
+</script>
 
 <script src="supabase.js"></script>
 </body>
