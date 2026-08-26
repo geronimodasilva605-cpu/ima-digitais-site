@@ -9,59 +9,30 @@ const supabaseClient = window.supabase.createClient(
 
 async function carregarDashboard() {
 
-    // CLIENTES
-    const clientesResult = await supabaseClient
+    console.log("Dashboard iniciado");
+
+    const { count, error } = await supabaseClient
         .from("clientes")
-        .select("*", { count: "exact", head: true });
+        .select("*", {
+            count: "exact",
+            head: true
+        });
 
-    const clientes = clientesResult.count;
+    console.log("Total de clientes:", count);
+    console.log("Erro:", error);
 
-    // PROJETOS
-    const projetosResult = await supabaseClient
-        .from("projetos")
-        .select("*", { count: "exact", head: true });
-
-    const projetos = projetosResult.count;
-
-    // EQUIPA
-    const equipaResult = await supabaseClient
-        .from("equipa")
-        .select("*", { count: "exact", head: true });
-
-    const membros = equipaResult.count;
-
-    // FATURAMENTO
-    const faturamentoResult = await supabaseClient
-        .from("faturamento")
-        .select("valor");
-
-    let totalFaturamento = 0;
-
-    if (faturamentoResult.data) {
-        totalFaturamento = faturamentoResult.data.reduce(
-            (total, item) => total + Number(item.valor || 0),
-            0
-        );
+    if (error) {
+        console.error("Erro ao buscar clientes:", error);
+        return;
     }
 
     const cards = document.querySelectorAll(".card h2");
 
-    if (cards.length >= 4) {
+    console.log("Cartões encontrados:", cards.length);
 
-        cards[0].textContent = clientes ?? 0;
-
-        cards[1].textContent = projetos ?? 0;
-
-        cards[2].textContent = membros ?? 0;
-
-        cards[3].textContent =
-            totalFaturamento.toLocaleString("pt-PT") + " Kz";
+    if (cards.length >= 1) {
+        cards[0].textContent = count ?? 0;
     }
-
-    console.log("Clientes:", clientes);
-    console.log("Projetos:", projetos);
-    console.log("Equipa:", membros);
-    console.log("Faturamento:", totalFaturamento);
 }
 
 document.addEventListener(
