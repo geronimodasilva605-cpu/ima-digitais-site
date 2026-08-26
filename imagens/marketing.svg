@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#07111f"/>
+<stop offset="100%" stop-color="#153f5f"/>
+</linearGradient>
+</defs>
+
+<rect width="1200" height="700" fill="url(#bg)"/>
+
+<circle cx="180" cy="120" r="100" fill="#00d9ff" opacity="0.12"/>
+<circle cx="1050" cy="580" r="140" fill="#00d9ff" opacity="0.10"/>
+
+<rect x="130" y="80" width="420" height="540"
+rx="35" fill="#0c1d31"
+stroke="#00d9ff"
+stroke-width="4"/>
+
+<rect x="160" y="125" width="360" height="410"
+rx="20" fill="#102b44"/>
+
+<text x="205" y="205"
+font-family="Arial"
+font-size="55"
+font-weight="bold"
+fill="#00d9ff">SOCIAL</text>
+
+<text x="205" y="260"
+font-family="Arial"
+font-size="40"
+fill="white">MARKETING</text>
+
+<circle cx="340" cy="365" r="75"
+fill="#00d9ff"
+opacity="0.9"/>
+
+<path d="M300 365 L330 395 L390 325"
+fill="none"
+stroke="#07111f"
+stroke-width="15"
+stroke-linecap="round"
+stroke-linejoin="round"/>
+
+<text x="205" y="485"
+font-family="Arial"
+font-size="24"
+fill="#9fb5c9">ALCANCE • CONTEÚDO • RESULTADOS</text>
+
+<text x="650" y="235"
+font-family="Arial"
+font-size="75"
+font-weight="bold"
+fill="#00d9ff">IMA</text>
+
+<text x="650" y="295"
+font-family="Arial"
+font-size="38"
+fill="white">MARKETING DIGITAL</text>
+
+<path d="M660 470 L730 410 L800 440 L900 320 L1010 365"
+fill="none"
+stroke="#00d9ff"
+stroke-width="10"
+stroke-linecap="round"
+stroke-linejoin="round"/>
+
+<circle cx="660" cy="470" r="12" fill="white"/>
+<circle cx="730" cy="410" r="12" fill="white"/>
+<circle cx="800" cy="440" r="12" fill="white"/>
+<circle cx="900" cy="320" r="12" fill="white"/>
+<circle cx="1010" cy="365" r="12" fill="white"/>
+
+<text x="650" y="550"
+font-family="Arial"
+font-size="27"
+fill="#9fb5c9">FAÇA A SUA MARCA SER VISTA</text>
+</svg>
