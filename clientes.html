@@ -29,9 +29,13 @@ body {
     margin-bottom: 25px;
 }
 
+.topo h1 {
+    margin: 0;
+}
+
 button {
     border: 0;
-    padding: 12px 18px;
+    padding: 10px 15px;
     border-radius: 8px;
     cursor: pointer;
     background: #111;
@@ -56,22 +60,36 @@ input {
 }
 
 .cliente {
-    padding: 15px 0;
+    padding: 18px 0;
     border-bottom: 1px solid #ddd;
 }
 
 .cliente strong {
     display: block;
     font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.acoes {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+}
+
+.editar {
+    background: #2563eb;
+}
+
+.excluir {
+    background: #dc2626;
+}
+
+.cancelar {
+    background: #666;
 }
 
 .voltar {
     background: #555;
-}
-
-#mensagem {
-    margin-top: 15px;
-    font-weight: bold;
 }
 </style>
 </head>
@@ -81,15 +99,19 @@ input {
 <div class="container">
 
 <div class="topo">
+
     <h1>👥 Clientes IMA</h1>
+
     <button class="voltar" onclick="voltarDashboard()">
         ← Dashboard
     </button>
+
 </div>
+
 
 <div class="formulario">
 
-<h2>Novo cliente</h2>
+<h2 id="tituloFormulario">Novo cliente</h2>
 
 <input id="nome" type="text" placeholder="Nome do cliente">
 
@@ -99,25 +121,34 @@ input {
 
 <input id="empresa" type="text" placeholder="Empresa">
 
-<button onclick="adicionarCliente()">
-Adicionar cliente
+
+<button id="botaoSalvar" onclick="adicionarCliente()">
+    Adicionar cliente
 </button>
 
-<div id="mensagem"></div>
+<button
+    id="botaoCancelar"
+    class="cancelar"
+    onclick="cancelarEdicao()"
+    style="display:none;">
+    Cancelar
+</button>
 
 </div>
+
 
 <div class="clientes">
 
 <h2>Clientes cadastrados</h2>
 
 <div id="listaClientes">
-Carregando clientes...
+    Carregando clientes...
 </div>
 
 </div>
 
 </div>
+
 
 <script>
 
@@ -133,131 +164,420 @@ window.supabase.createClient(
     SUPABASE_KEY
 );
 
+let clienteEditando = null;
+
+
+// ===============================
+// CARREGAR CLIENTES
+// ===============================
 
 async function carregarClientes() {
 
-    const lista =
-    document.getElementById("listaClientes");
-
-    lista.innerHTML = "Carregando clientes...";
-
     const { data, error } =
-    await supabaseClient
-    .from("clientes")
-    .select("id,nome,email,telefone,empresa")
-    .order("id", { ascending: false });
+        await supabaseClient
+            .from("clientes")
+            .select("*")
+            .order("id", {
+                ascending: false
+            });
 
-    console.log("Clientes:", data);
-    console.log("Erro:", error);
+    const lista =
+        document.getElementById(
+            "listaClientes"
+        );
+
 
     if (error) {
 
+        console.error(error);
+
         lista.innerHTML =
-        "Erro ao carregar clientes: " +
-        error.message;
+            "Erro ao carregar clientes: " +
+            error.message;
 
         return;
     }
+
 
     if (!data || data.length === 0) {
 
         lista.innerHTML =
-        "Nenhum cliente cadastrado ainda.";
+            "Nenhum cliente cadastrado ainda.";
 
         return;
     }
 
+
     lista.innerHTML = "";
+
 
     data.forEach(cliente => {
 
         const div =
-        document.createElement("div");
+            document.createElement("div");
 
         div.className = "cliente";
 
+
         div.innerHTML = `
-            <strong>${cliente.nome || ""}</strong>
-            <span>${cliente.email || ""}</span><br>
-            <span>${cliente.telefone || ""}</span><br>
-            <span>${cliente.empresa || ""}</span>
+
+            <strong>
+                ${cliente.nome || ""}
+            </strong>
+
+            <span>
+                E-mail: ${cliente.email || ""}
+            </span>
+
+            <br>
+
+            <span>
+                Telefone: ${cliente.telefone || ""}
+            </span>
+
+            <br>
+
+            <span>
+                Empresa: ${cliente.empresa || ""}
+            </span>
+
+            <div class="acoes">
+
+                <button
+                    class="editar"
+                    onclick="editarCliente(${cliente.id})">
+                    ✏️ Editar
+                </button>
+
+                <button
+                    class="excluir"
+                    onclick="excluirCliente(${cliente.id})">
+                    🗑️ Excluir
+                </button>
+
+            </div>
+
         `;
+
 
         lista.appendChild(div);
 
     });
+
 }
 
+
+// ===============================
+// ADICIONAR CLIENTE
+// ===============================
 
 async function adicionarCliente() {
 
     const nome =
-    document.getElementById("nome").value.trim();
+        document.getElementById("nome")
+        .value.trim();
 
     const email =
-    document.getElementById("email").value.trim();
+        document.getElementById("email")
+        .value.trim();
 
     const telefone =
-    document.getElementById("telefone").value.trim();
+        document.getElementById("telefone")
+        .value.trim();
 
     const empresa =
-    document.getElementById("empresa").value.trim();
+        document.getElementById("empresa")
+        .value.trim();
 
-    const mensagem =
-    document.getElementById("mensagem");
 
     if (!nome) {
 
-        mensagem.innerHTML =
-        "Digite o nome do cliente.";
+        alert(
+            "Digite o nome do cliente."
+        );
 
         return;
     }
 
-    mensagem.innerHTML =
-    "Cadastrando...";
 
-    const { data, error } =
-    await supabaseClient
-    .from("clientes")
-    .insert([
-        {
-            nome: nome,
-            email: email || null,
-            telefone: telefone || null,
-            empresa: empresa || null
-        }
-    ])
-    .select();
+    const { error } =
+        await supabaseClient
+            .from("clientes")
+            .insert([{
 
-    console.log("Cliente:", data);
-    console.log("Erro:", error);
+                nome: nome,
+                email: email,
+                telefone: telefone,
+                empresa: empresa
+
+            }]);
+
 
     if (error) {
 
-        mensagem.innerHTML =
-        "ERRO: " + error.message;
-
         console.error(error);
+
+        alert(
+            "Erro ao cadastrar cliente: " +
+            error.message
+        );
 
         return;
     }
 
-    mensagem.innerHTML =
-    "✅ Cliente cadastrado com sucesso!";
 
-    document.getElementById("nome").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("telefone").value = "";
-    document.getElementById("empresa").value = "";
+    alert(
+        "✅ Cliente cadastrado com sucesso!"
+    );
+
+
+    limparFormulario();
 
     carregarClientes();
+
 }
 
 
+// ===============================
+// EDITAR CLIENTE
+// ===============================
+
+async function editarCliente(id) {
+
+    const { data, error } =
+        await supabaseClient
+            .from("clientes")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+
+    if (error) {
+
+        alert(
+            "Erro ao buscar cliente: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    document.getElementById("nome").value =
+        data.nome || "";
+
+    document.getElementById("email").value =
+        data.email || "";
+
+    document.getElementById("telefone").value =
+        data.telefone || "";
+
+    document.getElementById("empresa").value =
+        data.empresa || "";
+
+
+    clienteEditando = id;
+
+
+    document.getElementById(
+        "tituloFormulario"
+    ).textContent = "Editar cliente";
+
+
+    document.getElementById(
+        "botaoSalvar"
+    ).textContent = "Salvar alterações";
+
+
+    document.getElementById(
+        "botaoSalvar"
+    ).onclick = salvarEdicao;
+
+
+    document.getElementById(
+        "botaoCancelar"
+    ).style.display = "inline-block";
+
+}
+
+
+// ===============================
+// SALVAR EDIÇÃO
+// ===============================
+
+async function salvarEdicao() {
+
+    const nome =
+        document.getElementById("nome")
+        .value.trim();
+
+    const email =
+        document.getElementById("email")
+        .value.trim();
+
+    const telefone =
+        document.getElementById("telefone")
+        .value.trim();
+
+    const empresa =
+        document.getElementById("empresa")
+        .value.trim();
+
+
+    if (!nome) {
+
+        alert(
+            "Digite o nome do cliente."
+        );
+
+        return;
+    }
+
+
+    const { error } =
+        await supabaseClient
+            .from("clientes")
+            .update({
+
+                nome: nome,
+                email: email,
+                telefone: telefone,
+                empresa: empresa
+
+            })
+            .eq("id", clienteEditando);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Erro ao atualizar cliente: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    alert(
+        "✅ Cliente atualizado com sucesso!"
+    );
+
+
+    cancelarEdicao();
+
+    carregarClientes();
+
+}
+
+
+// ===============================
+// EXCLUIR CLIENTE
+// ===============================
+
+async function excluirCliente(id) {
+
+    const confirmar =
+        confirm(
+            "Tem certeza que deseja excluir este cliente?"
+        );
+
+
+    if (!confirmar) {
+        return;
+    }
+
+
+    const { error } =
+        await supabaseClient
+            .from("clientes")
+            .delete()
+            .eq("id", id);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Erro ao excluir cliente: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    alert(
+        "✅ Cliente excluído com sucesso!"
+    );
+
+
+    carregarClientes();
+
+}
+
+
+// ===============================
+// CANCELAR EDIÇÃO
+// ===============================
+
+function cancelarEdicao() {
+
+    clienteEditando = null;
+
+    limparFormulario();
+
+
+    document.getElementById(
+        "tituloFormulario"
+    ).textContent = "Novo cliente";
+
+
+    document.getElementById(
+        "botaoSalvar"
+    ).textContent = "Adicionar cliente";
+
+
+    document.getElementById(
+        "botaoSalvar"
+    ).onclick = adicionarCliente;
+
+
+    document.getElementById(
+        "botaoCancelar"
+    ).style.display = "none";
+
+}
+
+
+// ===============================
+// LIMPAR FORMULÁRIO
+// ===============================
+
+function limparFormulario() {
+
+    document.getElementById("nome").value = "";
+
+    document.getElementById("email").value = "";
+
+    document.getElementById("telefone").value = "";
+
+    document.getElementById("empresa").value = "";
+
+}
+
+
+// ===============================
+// VOLTAR
+// ===============================
+
 function voltarDashboard() {
 
-    window.location.href = "admin.html";
+    window.location.href =
+        "admin.html";
 
 }
 
