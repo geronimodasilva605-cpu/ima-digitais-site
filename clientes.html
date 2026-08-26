@@ -29,10 +29,6 @@ body {
     margin-bottom: 25px;
 }
 
-.topo h1 {
-    margin: 0;
-}
-
 button {
     border: 0;
     padding: 12px 18px;
@@ -42,7 +38,8 @@ button {
     color: white;
 }
 
-.formulario {
+.formulario,
+.clientes {
     background: white;
     padding: 25px;
     border-radius: 12px;
@@ -58,12 +55,6 @@ input {
     border-radius: 7px;
 }
 
-.clientes {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-}
-
 .cliente {
     padding: 15px 0;
     border-bottom: 1px solid #ddd;
@@ -77,6 +68,11 @@ input {
 .voltar {
     background: #555;
 }
+
+#mensagem {
+    margin-top: 15px;
+    font-weight: bold;
+}
 </style>
 </head>
 
@@ -86,7 +82,9 @@ input {
 
 <div class="topo">
     <h1>👥 Clientes IMA</h1>
-    <button class="voltar" onclick="voltarDashboard()">← Dashboard</button>
+    <button class="voltar" onclick="voltarDashboard()">
+        ← Dashboard
+    </button>
 </div>
 
 <div class="formulario">
@@ -99,11 +97,15 @@ input {
 
 <input id="telefone" type="text" placeholder="Telefone">
 
-<button onclick="adicionarCliente()">Adicionar cliente</button>
+<input id="empresa" type="text" placeholder="Empresa">
 
-const { data, error } = await supabaseClient
-    .from("clientes")
-    .select("*");
+<button onclick="adicionarCliente()">
+Adicionar cliente
+</button>
+
+<div id="mensagem"></div>
+
+</div>
 
 <div class="clientes">
 
@@ -119,11 +121,14 @@ Carregando clientes...
 
 <script>
 
-const SUPABASE_URL = "https://vzqndrnwgpvbawjuezsd.supabase.co";
+const SUPABASE_URL =
+"https://vzqndrnwgpvbawjuezsd.supabase.co";
 
-const SUPABASE_KEY = "sb_publishable_Ob3owo-lP6TCJbnTPW7Ecg_wyvaoEps";
+const SUPABASE_KEY =
+"sb_publishable_Ob3owo-lP6TCJbnTPW7Ecg_wyvaoEps";
 
-const supabaseClient = window.supabase.createClient(
+const supabaseClient =
+window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
@@ -131,21 +136,34 @@ const supabaseClient = window.supabase.createClient(
 
 async function carregarClientes() {
 
-    const { data, error } = await supabaseClient
-        .from("clientes")
-        .select("*")
-        .order("id", { ascending: false });
+    const lista =
+    document.getElementById("listaClientes");
 
-    const lista = document.getElementById("listaClientes");
+    lista.innerHTML = "Carregando clientes...";
+
+    const { data, error } =
+    await supabaseClient
+    .from("clientes")
+    .select("id,nome,email,telefone,empresa")
+    .order("id", { ascending: false });
+
+    console.log("Clientes:", data);
+    console.log("Erro:", error);
 
     if (error) {
-        console.error(error);
-        lista.innerHTML = "Erro ao carregar clientes.";
+
+        lista.innerHTML =
+        "Erro ao carregar clientes: " +
+        error.message;
+
         return;
     }
 
     if (!data || data.length === 0) {
-        lista.innerHTML = "Nenhum cliente cadastrado ainda.";
+
+        lista.innerHTML =
+        "Nenhum cliente cadastrado ainda.";
+
         return;
     }
 
@@ -153,14 +171,16 @@ async function carregarClientes() {
 
     data.forEach(cliente => {
 
-        const div = document.createElement("div");
+        const div =
+        document.createElement("div");
 
         div.className = "cliente";
 
         div.innerHTML = `
-            <strong>${cliente.nome}</strong>
+            <strong>${cliente.nome || ""}</strong>
             <span>${cliente.email || ""}</span><br>
-            <span>${cliente.telefone || ""}</span>
+            <span>${cliente.telefone || ""}</span><br>
+            <span>${cliente.empresa || ""}</span>
         `;
 
         lista.appendChild(div);
@@ -171,43 +191,74 @@ async function carregarClientes() {
 
 async function adicionarCliente() {
 
-    const nome = document.getElementById("nome").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const telefone = document.getElementById("telefone").value.trim();
+    const nome =
+    document.getElementById("nome").value.trim();
+
+    const email =
+    document.getElementById("email").value.trim();
+
+    const telefone =
+    document.getElementById("telefone").value.trim();
+
+    const empresa =
+    document.getElementById("empresa").value.trim();
+
+    const mensagem =
+    document.getElementById("mensagem");
 
     if (!nome) {
-        alert("Digite o nome do cliente.");
+
+        mensagem.innerHTML =
+        "Digite o nome do cliente.";
+
         return;
     }
 
-    const { error } = await supabaseClient
-        .from("clientes")
-        .insert([
-            {
-                nome: nome,
-                email: email,
-                telefone: telefone
-            }
-        ]);
+    mensagem.innerHTML =
+    "Cadastrando...";
+
+    const { data, error } =
+    await supabaseClient
+    .from("clientes")
+    .insert([
+        {
+            nome: nome,
+            email: email || null,
+            telefone: telefone || null,
+            empresa: empresa || null
+        }
+    ])
+    .select();
+
+    console.log("Cliente:", data);
+    console.log("Erro:", error);
 
     if (error) {
+
+        mensagem.innerHTML =
+        "ERRO: " + error.message;
+
         console.error(error);
-        alert("Erro ao cadastrar cliente.");
+
         return;
     }
 
-    alert("Cliente cadastrado com sucesso!");
+    mensagem.innerHTML =
+    "✅ Cliente cadastrado com sucesso!";
 
     document.getElementById("nome").value = "";
     document.getElementById("email").value = "";
     document.getElementById("telefone").value = "";
+    document.getElementById("empresa").value = "";
 
     carregarClientes();
 }
 
 
 function voltarDashboard() {
+
     window.location.href = "admin.html";
+
 }
 
 
