@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Projetos - IMA Digitais</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f6f8;
+    color: #222;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.topo h1 {
+    margin: 0;
+}
+
+button {
+    border: 0;
+    padding: 12px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #111;
+    color: white;
+}
+
+.voltar {
+    background: #555;
+}
+
+.formulario,
+.projetos {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    margin: 8px 0 15px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.projeto {
+    padding: 18px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.projeto strong {
+    display: block;
+    font-size: 19px;
+    margin-bottom: 7px;
+}
+
+.projeto span {
+    display: block;
+    margin: 4px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="topo">
+    <h1>📁 Projetos IMA</h1>
+
+    <button class="voltar" onclick="voltarDashboard()">
+        ← Dashboard
+    </button>
+</div>
+
+
+<div class="formulario">
+
+<h2>Novo projeto</h2>
+
+<input
+    id="nome"
+    type="text"
+    placeholder="Nome do projeto"
+>
+
+<input
+    id="cliente"
+    type="text"
+    placeholder="Nome do cliente"
+>
+
+<textarea
+    id="descricao"
+    placeholder="Descrição do projeto"
+></textarea>
+
+<input
+    id="valor"
+    type="number"
+    placeholder="Valor em Kz"
+>
+
+<select id="status">
+
+    <option value="Em andamento">
+        Em andamento
+    </option>
+
+    <option value="Concluído">
+        Concluído
+    </option>
+
+    <option value="Pendente">
+        Pendente
+    </option>
+
+</select>
+
+<button onclick="adicionarProjeto()">
+    Adicionar projeto
+</button>
+
+</div>
+
+
+<div class="projetos">
+
+<h2>Projetos cadastrados</h2>
+
+<div id="listaProjetos">
+    Carregando projetos...
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://vzqndrnwgpvbawjuezsd.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_Ob3owo-lP6TCJbnTPW7Ecg_wyvaoEps";
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+async function carregarProjetos() {
+
+    const { data, error } =
+        await supabaseClient
+            .from("projetos")
+            .select("*")
+            .order("id", {
+                ascending: false
+            });
+
+    const lista =
+        document.getElementById("listaProjetos");
+
+
+    if (error) {
+
+        console.error(error);
+
+        lista.innerHTML =
+            "Erro ao carregar projetos: " +
+            error.message;
+
+        return;
+    }
+
+
+    if (!data || data.length === 0) {
+
+        lista.innerHTML =
+            "Nenhum projeto cadastrado ainda.";
+
+        return;
+    }
+
+
+    lista.innerHTML = "";
+
+
+    data.forEach(projeto => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "projeto";
+
+
+        div.innerHTML = `
+
+            <strong>
+                ${projeto.nome}
+            </strong>
+
+            <span>
+                Cliente: ${projeto.cliente || ""}
+            </span>
+
+            <span>
+                ${projeto.descricao || ""}
+            </span>
+
+            <span>
+                Valor: ${projeto.valor || 0} Kz
+            </span>
+
+            <span>
+                Status: ${projeto.status || ""}
+            </span>
+
+        `;
+
+
+        lista.appendChild(div);
+
+    });
+
+}
+
+
+async function adicionarProjeto() {
+
+    const nome =
+        document.getElementById("nome")
+        .value.trim();
+
+    const cliente =
+        document.getElementById("cliente")
+        .value.trim();
+
+    const descricao =
+        document.getElementById("descricao")
+        .value.trim();
+
+    const valor =
+        document.getElementById("valor")
+        .value;
+
+    const status =
+        document.getElementById("status")
+        .value;
+
+
+    if (!nome) {
+
+        alert(
+            "Digite o nome do projeto."
+        );
+
+        return;
+    }
+
+
+    const { error } =
+        await supabaseClient
+            .from("projetos")
+            .insert([{
+
+                nome: nome,
+
+                cliente: cliente,
+
+                descricao: descricao,
+
+                valor: Number(valor) || 0,
+
+                status: status
+
+            }]);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Erro ao cadastrar projeto: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    alert(
+        "✅ Projeto cadastrado com sucesso!"
+    );
+
+
+    document.getElementById("nome").value = "";
+
+    document.getElementById("cliente").value = "";
+
+    document.getElementById("descricao").value = "";
+
+    document.getElementById("valor").value = "";
+
+
+    carregarProjetos();
+
+}
+
+
+function voltarDashboard() {
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+carregarProjetos();
+
+</script>
+
+</body>
+</html>
