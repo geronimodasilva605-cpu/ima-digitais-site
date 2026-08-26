@@ -20,6 +20,15 @@ async function carregarDashboard() {
                 head: true
             });
 
+    // PROJETOS
+    const { count: projetos, error: erroProjetos } =
+        await supabaseClient
+            .from("projetos")
+            .select("*", {
+                count: "exact",
+                head: true
+            });
+
     // EQUIPA
     const { count: membros, error: erroEquipa } =
         await supabaseClient
@@ -29,11 +38,17 @@ async function carregarDashboard() {
                 head: true
             });
 
-    console.log("Total de clientes:", clientes);
-    console.log("Total da equipa:", membros);
+    console.log("Clientes:", clientes);
+    console.log("Projetos:", projetos);
+    console.log("Equipa:", membros);
 
     if (erroClientes) {
         console.error("Erro clientes:", erroClientes);
+        return;
+    }
+
+    if (erroProjetos) {
+        console.error("Erro projetos:", erroProjetos);
         return;
     }
 
@@ -46,12 +61,17 @@ async function carregarDashboard() {
 
     console.log("Cartões encontrados:", cards.length);
 
-    // Clientes
+    // 👥 Clientes
     if (cards.length >= 1) {
         cards[0].textContent = clientes ?? 0;
     }
 
-    // Equipa
+    // 📁 Projetos
+    if (cards.length >= 2) {
+        cards[1].textContent = projetos ?? 0;
+    }
+
+    // 👨‍💻 Equipa
     if (cards.length >= 3) {
         cards[2].textContent = membros ?? 0;
     }
