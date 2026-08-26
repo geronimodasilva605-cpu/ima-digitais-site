@@ -101,7 +101,9 @@ input {
 
 <button onclick="adicionarCliente()">Adicionar cliente</button>
 
-</div>
+const { data, error } = await supabaseClient
+    .from("clientes")
+    .select("*");
 
 <div class="clientes">
 
