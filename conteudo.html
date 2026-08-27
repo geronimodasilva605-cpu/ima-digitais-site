@@ -1,0 +1,682 @@
+html
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Conteúdo - IMA Digitais</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f6f8;
+    color: #222;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.topo h1 {
+    margin: 0;
+}
+
+button {
+    border: 0;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #111;
+    color: white;
+}
+
+.voltar {
+    background: #555;
+}
+
+.editar {
+    background: #2563eb;
+}
+
+.excluir {
+    background: #dc2626;
+}
+
+.cancelar {
+    background: #666;
+}
+
+.formulario,
+.conteudos {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    margin: 8px 0 15px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.item {
+    padding: 18px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.item strong {
+    display: block;
+    font-size: 19px;
+    margin-bottom: 7px;
+}
+
+.item span {
+    display: block;
+    margin: 4px 0;
+}
+
+.acoes {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="topo">
+
+    <h1>📢 Conteúdo IMA</h1>
+
+    <button class="voltar" onclick="voltarDashboard()">
+        ← Dashboard
+    </button>
+
+</div>
+
+<div class="formulario">
+
+<h2 id="tituloFormulario">Novo conteúdo</h2>
+
+<input
+    id="titulo"
+    type="text"
+    placeholder="Título da publicação ou campanha"
+>
+
+<select id="tipo">
+
+    <option value="Publicação">
+        Publicação
+    </option>
+
+    <option value="Campanha">
+        Campanha
+    </option>
+
+    <option value="Conteúdo">
+        Conteúdo
+    </option>
+
+</select>
+
+<input
+    id="plataforma"
+    type="text"
+    placeholder="Plataforma (Facebook, Instagram, LinkedIn...)"
+>
+
+<textarea
+    id="descricao"
+    placeholder="Descrição"
+></textarea>
+
+<input
+    id="valor"
+    type="number"
+    placeholder="Valor em Kz"
+>
+
+<select id="status">
+
+    <option value="Pendente">
+        Pendente
+    </option>
+
+    <option value="Em andamento">
+        Em andamento
+    </option>
+
+    <option value="Publicado">
+        Publicado
+    </option>
+
+    <option value="Concluído">
+        Concluído
+    </option>
+
+</select>
+
+<input
+    id="data_publicacao"
+    type="date"
+>
+
+<button id="botaoSalvar" onclick="adicionarConteudo()">
+    Adicionar conteúdo
+</button>
+
+<button
+    id="botaoCancelar"
+    class="cancelar"
+    onclick="cancelarEdicao()"
+    style="display:none;"
+>
+    Cancelar
+</button>
+
+</div>
+
+<div class="conteudos">
+
+<h2>Publicações, campanhas e conteúdos</h2>
+
+<div id="listaConteudo">
+    Carregando conteúdos...
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://vzqndrnwgpvbawjuezsd.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_Ob3owo-lP6TCJbnTPW7Ecg_wyvaoEps";
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+let conteudoEditando = null;
+
+
+// CARREGAR
+
+async function carregarConteudo() {
+
+    const { data, error } =
+        await supabaseClient
+            .from("conteudo")
+            .select("*")
+            .order("id", {
+                ascending: false
+            });
+
+    const lista =
+        document.getElementById("listaConteudo");
+
+    if (error) {
+
+        console.error(error);
+
+        lista.innerHTML =
+            "Erro ao carregar conteúdo: " +
+            error.message;
+
+        return;
+    }
+
+    if (!data || data.length === 0) {
+
+        lista.innerHTML =
+            "Nenhum conteúdo cadastrado ainda.";
+
+        return;
+    }
+
+    lista.innerHTML = "";
+
+    data.forEach(item => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "item";
+
+        div.innerHTML = `
+
+            <strong>
+                ${item.titulo || ""}
+            </strong>
+
+            <span>
+                Tipo: ${item.tipo || ""}
+            </span>
+
+            <span>
+                Plataforma: ${item.plataforma || ""}
+            </span>
+
+            <span>
+                Descrição: ${item.descricao || ""}
+            </span>
+
+            <span>
+                Valor: ${Number(item.valor || 0).toLocaleString("pt-AO")} Kz
+            </span>
+
+            <span>
+                Status: ${item.status || ""}
+            </span>
+
+            <span>
+                Data: ${item.data_publicacao || ""}
+            </span>
+
+            <div class="acoes">
+
+                <button
+                    class="editar"
+                    onclick="editarConteudo(${item.id})"
+                >
+                    ✏️ Editar
+                </button>
+
+                <button
+                    class="excluir"
+                    onclick="excluirConteudo(${item.id})"
+                >
+                    🗑️ Excluir
+                </button>
+
+            </div>
+
+        `;
+
+        lista.appendChild(div);
+
+    });
+}
+
+
+// ADICIONAR
+
+async function adicionarConteudo() {
+
+    const titulo =
+        document.getElementById("titulo")
+        .value.trim();
+
+    const tipo =
+        document.getElementById("tipo")
+        .value;
+
+    const plataforma =
+        document.getElementById("plataforma")
+        .value.trim();
+
+    const descricao =
+        document.getElementById("descricao")
+        .value.trim();
+
+    const valor =
+        document.getElementById("valor")
+        .value;
+
+    const status =
+        document.getElementById("status")
+        .value;
+
+    const data_publicacao =
+        document.getElementById("data_publicacao")
+        .value;
+
+
+    if (!titulo) {
+
+        alert(
+            "Digite o título."
+        );
+
+        return;
+    }
+
+
+    const { error } =
+        await supabaseClient
+            .from("conteudo")
+            .insert([{
+
+                titulo: titulo,
+                tipo: tipo,
+                plataforma: plataforma,
+                descricao: descricao,
+                valor: Number(valor) || 0,
+                status: status,
+                data_publicacao:
+                    data_publicacao || null
+
+            }]);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Erro ao cadastrar conteúdo: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    alert(
+        "✅ Conteúdo cadastrado com sucesso!"
+    );
+
+    limparFormulario();
+
+    carregarConteudo();
+}
+
+
+// EDITAR
+
+async function editarConteudo(id) {
+
+    const { data, error } =
+        await supabaseClient
+            .from("conteudo")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+
+    if (error) {
+
+        alert(
+            "Erro ao buscar conteúdo: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    document.getElementById("titulo").value =
+        data.titulo || "";
+
+    document.getElementById("tipo").value =
+        data.tipo || "Conteúdo";
+
+    document.getElementById("plataforma").value =
+        data.plataforma || "";
+
+    document.getElementById("descricao").value =
+        data.descricao || "";
+
+    document.getElementById("valor").value =
+        data.valor || 0;
+
+    document.getElementById("status").value =
+        data.status || "Pendente";
+
+    document.getElementById("data_publicacao").value =
+        data.data_publicacao || "";
+
+
+    conteudoEditando = id;
+
+
+    document.getElementById(
+        "tituloFormulario"
+    ).textContent =
+        "Editar conteúdo";
+
+
+    document.getElementById(
+        "botaoSalvar"
+    ).textContent =
+        "Salvar alterações";
+
+
+    document.getElementById(
+        "botaoSalvar"
+    ).onclick =
+        salvarEdicao;
+
+
+    document.getElementById(
+        "botaoCancelar"
+    ).style.display =
+        "inline-block";
+}
+
+
+// SALVAR EDIÇÃO
+
+async function salvarEdicao() {
+
+    const titulo =
+        document.getElementById("titulo")
+        .value.trim();
+
+    const tipo =
+        document.getElementById("tipo")
+        .value;
+
+    const plataforma =
+        document.getElementById("plataforma")
+        .value.trim();
+
+    const descricao =
+        document.getElementById("descricao")
+        .value.trim();
+
+    const valor =
+        document.getElementById("valor")
+        .value;
+
+    const status =
+        document.getElementById("status")
+        .value;
+
+    const data_publicacao =
+        document.getElementById("data_publicacao")
+        .value;
+
+
+    if (!titulo) {
+
+        alert(
+            "Digite o título."
+        );
+
+        return;
+    }
+
+
+    const { error } =
+        await supabaseClient
+            .from("conteudo")
+            .update({
+
+                titulo: titulo,
+                tipo: tipo,
+                plataforma: plataforma,
+                descricao: descricao,
+                valor: Number(valor) || 0,
+                status: status,
+                data_publicacao:
+                    data_publicacao || null
+
+            })
+            .eq("id", conteudoEditando);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Erro ao atualizar: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    alert(
+        "✅ Conteúdo atualizado com sucesso!"
+    );
+
+    cancelarEdicao();
+
+    carregarConteudo();
+}
+
+
+// EXCLUIR
+
+async function excluirConteudo(id) {
+
+    if (!confirm(
+        "Tem certeza que deseja excluir este conteúdo?"
+    )) {
+
+        return;
+    }
+
+
+    const { error } =
+        await supabaseClient
+            .from("conteudo")
+            .delete()
+            .eq("id", id);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Erro ao excluir: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    alert(
+        "✅ Conteúdo excluído com sucesso!"
+    );
+
+    carregarConteudo();
+}
+
+
+// CANCELAR
+
+function cancelarEdicao() {
+
+    conteudoEditando = null;
+
+    limparFormulario();
+
+    document.getElementById(
+        "tituloFormulario"
+    ).textContent =
+        "Novo conteúdo";
+
+    document.getElementById(
+        "botaoSalvar"
+    ).textContent =
+        "Adicionar conteúdo";
+
+    document.getElementById(
+        "botaoSalvar"
+    ).onclick =
+        adicionarConteudo;
+
+    document.getElementById(
+        "botaoCancelar"
+    ).style.display =
+        "none";
+}
+
+
+// LIMPAR
+
+function limparFormulario() {
+
+    document.getElementById("titulo").value = "";
+
+    document.getElementById("tipo").value =
+        "Publicação";
+
+    document.getElementById("plataforma").value = "";
+
+    document.getElementById("descricao").value = "";
+
+    document.getElementById("valor").value = "";
+
+    document.getElementById("status").value =
+        "Pendente";
+
+    document.getElementById("data_publicacao").value = "";
+}
+
+
+// VOLTAR
+
+function voltarDashboard() {
+
+    window.location.href =
+        "admin.html";
+}
+
+
+carregarConteudo();
+
+</script>
+
+</body>
+</html>
+```
