@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Redes Sociais - IMA Digitais</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f8;
+margin:0;
+}
+
+.container{
+max-width:900px;
+margin:40px auto;
+padding:20px;
+}
+
+.box{
+background:white;
+padding:25px;
+border-radius:12px;
+margin-bottom:20px;
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin:10px 0;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+button{
+background:#111;
+color:white;
+padding:12px 20px;
+border:0;
+border-radius:8px;
+cursor:pointer;
+}
+
+.rede{
+background:#eee;
+padding:15px;
+margin-top:10px;
+border-radius:8px;
+}
+
+.voltar{
+background:#555;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<div class="box">
+
+<h1>🌐 Redes Sociais IMA</h1>
+
+<button class="voltar" onclick="voltar()">
+← Dashboard
+</button>
+
+</div>
+
+
+
+<div class="box">
+
+<h2>Adicionar Rede Social</h2>
+
+
+<select id="nome">
+
+<option>Facebook</option>
+<option>LinkedIn</option>
+
+</select>
+
+
+<input 
+id="link"
+placeholder="Cole o link da página">
+
+
+<button onclick="adicionarRede()">
+Salvar Rede
+</button>
+
+
+</div>
+
+
+
+<div class="box">
+
+<h2>Redes cadastradas</h2>
+
+<div id="lista">
+Carregando...
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+
+const SUPABASE_URL =
+"https://vzqndrnwgpvbawjuezsd.supabase.co";
+
+
+const SUPABASE_KEY =
+"sb_publishable_Ob3owo-lP6TCJbnTPW7Ecg_wyvaoEps";
+
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+
+async function carregarRedes(){
+
+
+const {data,error}=await supabaseClient
+.from("redes_sociais")
+.select("*")
+.order("id",{ascending:false});
+
+
+const lista=document.getElementById("lista");
+
+
+if(error){
+
+lista.innerHTML=error.message;
+return;
+
+}
+
+
+lista.innerHTML="";
+
+
+data.forEach(rede=>{
+
+
+lista.innerHTML += `
+
+<div class="rede">
+
+<strong>${rede.nome}</strong><br>
+
+${rede.link || ""}
+
+</div>
+
+`;
+
+
+});
+
+
+}
+
+
+
+async function adicionarRede(){
+
+
+const nome=
+document.getElementById("nome").value;
+
+
+const link=
+document.getElementById("link").value;
+
+
+const {error}=await supabaseClient
+.from("redes_sociais")
+.insert([
+
+{
+nome:nome,
+link:link,
+conectado:false
+}
+
+]);
+
+
+if(error){
+
+alert(error.message);
+return;
+
+}
+
+
+alert("✅ Rede adicionada com sucesso!");
+
+
+document.getElementById("link").value="";
+
+
+carregarRedes();
+
+
+}
+
+
+
+function voltar(){
+
+window.location.href="admin.html";
+
+}
+
+
+carregarRedes();
+
+
+</script>
+
+
+</body>
+</html>
