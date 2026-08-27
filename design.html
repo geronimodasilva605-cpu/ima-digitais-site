@@ -30,6 +30,10 @@ body {
     margin-bottom: 25px;
 }
 
+.topo h1 {
+    margin: 0;
+}
+
 button {
     border: 0;
     padding: 10px 15px;
@@ -134,6 +138,34 @@ textarea {
     placeholder="Nome do cliente"
 >
 
+<select id="tipo">
+
+    <option value="Logotipo">
+        Logotipo
+    </option>
+
+    <option value="Flyer">
+        Flyer
+    </option>
+
+    <option value="Cartaz">
+        Cartaz
+    </option>
+
+    <option value="Banner">
+        Banner
+    </option>
+
+    <option value="Identidade Visual">
+        Identidade Visual
+    </option>
+
+    <option value="Outro">
+        Outro
+    </option>
+
+</select>
+
 <textarea
     id="descricao"
     placeholder="Descrição do trabalho"
@@ -179,7 +211,7 @@ textarea {
 
 <div class="designs">
 
-<h2>Trabalhos de Design</h2>
+<h2>Trabalhos de Design cadastrados</h2>
 
 <div id="listaDesign">
     Carregando trabalhos...
@@ -222,9 +254,7 @@ async function carregarDesign() {
             });
 
     const lista =
-        document.getElementById(
-            "listaDesign"
-        );
+        document.getElementById("listaDesign");
 
 
     if (error) {
@@ -267,6 +297,10 @@ async function carregarDesign() {
 
             <span>
                 Cliente: ${item.cliente || ""}
+            </span>
+
+            <span>
+                Tipo: ${item.tipo || ""}
             </span>
 
             <span>
@@ -323,6 +357,10 @@ async function adicionarDesign() {
         document.getElementById("cliente")
         .value.trim();
 
+    const tipo =
+        document.getElementById("tipo")
+        .value;
+
     const descricao =
         document.getElementById("descricao")
         .value.trim();
@@ -353,6 +391,7 @@ async function adicionarDesign() {
 
                 nome: nome,
                 cliente: cliente,
+                tipo: tipo,
                 descricao: descricao,
                 valor: Number(valor) || 0,
                 status: status
@@ -416,6 +455,9 @@ async function editarDesign(id) {
     document.getElementById("cliente").value =
         data.cliente || "";
 
+    document.getElementById("tipo").value =
+        data.tipo || "Outro";
+
     document.getElementById("descricao").value =
         data.descricao || "";
 
@@ -431,22 +473,26 @@ async function editarDesign(id) {
 
     document.getElementById(
         "tituloFormulario"
-    ).textContent = "Editar trabalho de Design";
+    ).textContent =
+        "Editar trabalho de Design";
 
 
     document.getElementById(
         "botaoSalvar"
-    ).textContent = "Salvar alterações";
+    ).textContent =
+        "Salvar alterações";
 
 
     document.getElementById(
         "botaoSalvar"
-    ).onclick = salvarEdicao;
+    ).onclick =
+        salvarEdicao;
 
 
     document.getElementById(
         "botaoCancelar"
-    ).style.display = "inline-block";
+    ).style.display =
+        "inline-block";
 
 }
 
@@ -464,6 +510,10 @@ async function salvarEdicao() {
     const cliente =
         document.getElementById("cliente")
         .value.trim();
+
+    const tipo =
+        document.getElementById("tipo")
+        .value;
 
     const descricao =
         document.getElementById("descricao")
@@ -495,6 +545,7 @@ async function salvarEdicao() {
 
                 nome: nome,
                 cliente: cliente,
+                tipo: tipo,
                 descricao: descricao,
                 valor: Number(valor) || 0,
                 status: status
@@ -622,6 +673,8 @@ function limparFormulario() {
 
     document.getElementById("cliente").value = "";
 
+    document.getElementById("tipo").value = "Logotipo";
+
     document.getElementById("descricao").value = "";
 
     document.getElementById("valor").value = "";
@@ -633,7 +686,7 @@ function limparFormulario() {
 
 
 // ============================
-// VOLTAR DASHBOARD
+// VOLTAR
 // ============================
 
 function voltarDashboard() {
