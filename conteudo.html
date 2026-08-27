@@ -167,7 +167,12 @@ Facebook
 <input type="checkbox" id="linkedin">
 LinkedIn
 </label>
+<br><br>
 
+<label>
+<input type="checkbox" id="instagram">
+Instagram
+</label>
 <textarea
     id="descricao"
     placeholder="Descrição"
@@ -676,8 +681,11 @@ function limparFormulario() {
         "Pendente";
 
     document.getElementById("data_publicacao").value = "";
-}
 
+    document.getElementById("facebook").checked = false;
+
+    document.getElementById("linkedin").checked = false;
+}
 
 // VOLTAR
 
