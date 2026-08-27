@@ -31,7 +31,7 @@ body {
 
 button {
     border: 0;
-    padding: 12px 18px;
+    padding: 10px 15px;
     border-radius: 8px;
     cursor: pointer;
     background: #111;
@@ -40,6 +40,18 @@ button {
 
 .voltar {
     background: #555;
+}
+
+.editar {
+    background: #2563eb;
+}
+
+.excluir {
+    background: #dc2626;
+}
+
+.cancelar {
+    background: #666;
 }
 
 .formulario,
@@ -60,17 +72,24 @@ input {
 }
 
 .membro {
-    padding: 15px 0;
+    padding: 18px 0;
     border-bottom: 1px solid #ddd;
 }
 
 .membro strong {
     display: block;
     font-size: 18px;
+    margin-bottom: 5px;
 }
 
 .cargo {
     font-weight: bold;
+}
+
+.acoes {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
 }
 </style>
 </head>
@@ -80,16 +99,19 @@ input {
 <div class="container">
 
 <div class="topo">
+
     <h1>👨‍💻 Equipa IMA</h1>
 
     <button class="voltar" onclick="voltarDashboard()">
         ← Dashboard
     </button>
+
 </div>
+
 
 <div class="formulario">
 
-<h2>Novo membro</h2>
+<h2 id="tituloFormulario">Novo membro</h2>
 
 <input id="nome" type="text" placeholder="Nome completo">
 
@@ -101,120 +123,215 @@ input {
 
 <input id="setor" type="text" placeholder="Setor">
 
-<button onclick="adicionarMembro()">
-Adicionar membro
+
+<button id="botaoSalvar" onclick="adicionarMembro()">
+    Adicionar membro
+</button>
+
+<button
+    id="botaoCancelar"
+    class="cancelar"
+    onclick="cancelarEdicao()"
+    style="display:none;">
+    Cancelar
 </button>
 
 </div>
+
 
 <div class="equipa">
 
 <h2>Membros da equipa</h2>
 
 <div id="listaEquipa">
-Carregando equipa...
+    Carregando equipa...
 </div>
 
 </div>
 
 </div>
+
 
 <script>
 
-const SUPABASE_URL = "https://vzqndrnwgpvbawjuezsd.supabase.co";
+const SUPABASE_URL =
+"https://vzqndrnwgpvbawjuezsd.supabase.co";
 
-const SUPABASE_KEY = "sb_publishable_Ob3owo-lP6TCJbnTPW7Ecg_wyvaoEps";
+const SUPABASE_KEY =
+"sb_publishable_Ob3owo-lP6TCJbnTPW7Ecg_wyvaoEps";
 
-const supabaseClient = window.supabase.createClient(
+const supabaseClient =
+window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
 
+let membroEditando = null;
+
+
+// ============================
+// CARREGAR EQUIPA
+// ============================
 
 async function carregarEquipa() {
 
-    const { data, error } = await supabaseClient
-        .from("equipa")
-        .select("*")
-        .order("id", { ascending: false });
+    const { data, error } =
+        await supabaseClient
+            .from("equipa")
+            .select("*")
+            .order("id", {
+                ascending: false
+            });
 
-    const lista = document.getElementById("listaEquipa");
+    const lista =
+        document.getElementById("listaEquipa");
+
 
     if (error) {
+
         console.error(error);
+
         lista.innerHTML =
-            "Erro ao carregar equipa: " + error.message;
+            "Erro ao carregar equipa: " +
+            error.message;
+
         return;
     }
 
+
     if (!data || data.length === 0) {
+
         lista.innerHTML =
             "Nenhum membro cadastrado ainda.";
+
         return;
     }
+
 
     lista.innerHTML = "";
 
+
     data.forEach(membro => {
 
-        const div = document.createElement("div");
+        const div =
+            document.createElement("div");
 
         div.className = "membro";
 
+
         div.innerHTML = `
-            <strong>${membro.nome}</strong>
-            <span class="cargo">${membro.cargo}</span><br>
-            <span>${membro.email || ""}</span><br>
-            <span>${membro.telefone || ""}</span><br>
-            <span>${membro.setor || ""}</span>
+
+            <strong>
+                ${membro.nome || ""}
+            </strong>
+
+            <span class="cargo">
+                ${membro.cargo || ""}
+            </span>
+
+            <br>
+
+            <span>
+                E-mail: ${membro.email || ""}
+            </span>
+
+            <br>
+
+            <span>
+                Telefone: ${membro.telefone || ""}
+            </span>
+
+            <br>
+
+            <span>
+                Setor: ${membro.setor || ""}
+            </span>
+
+
+            <div class="acoes">
+
+                <button
+                    class="editar"
+                    onclick="editarMembro(${membro.id})">
+                    ✏️ Editar
+                </button>
+
+                <button
+                    class="excluir"
+                    onclick="excluirMembro(${membro.id})">
+                    🗑️ Excluir
+                </button>
+
+            </div>
         `;
+
 
         lista.appendChild(div);
 
     });
+
 }
 
+
+// ============================
+// ADICIONAR MEMBRO
+// ============================
 
 async function adicionarMembro() {
 
     const nome =
-        document.getElementById("nome").value.trim();
+        document.getElementById("nome")
+        .value.trim();
 
     const cargo =
-        document.getElementById("cargo").value.trim();
+        document.getElementById("cargo")
+        .value.trim();
 
     const email =
-        document.getElementById("email").value.trim();
+        document.getElementById("email")
+        .value.trim();
 
     const telefone =
-        document.getElementById("telefone").value.trim();
+        document.getElementById("telefone")
+        .value.trim();
 
     const setor =
-        document.getElementById("setor").value.trim();
+        document.getElementById("setor")
+        .value.trim();
 
 
     if (!nome) {
-        alert("Digite o nome do membro.");
+
+        alert(
+            "Digite o nome do membro."
+        );
+
         return;
     }
+
 
     if (!cargo) {
-        alert("Digite o cargo.");
+
+        alert(
+            "Digite o cargo."
+        );
+
         return;
     }
 
 
-    const { error } = await supabaseClient
-        .from("equipa")
-        .insert([
-            {
+    const { error } =
+        await supabaseClient
+            .from("equipa")
+            .insert([{
+
                 nome: nome,
                 cargo: cargo,
                 email: email,
                 telefone: telefone,
                 setor: setor
-            }
-        ]);
+
+            }]);
 
 
     if (error) {
@@ -230,23 +347,278 @@ async function adicionarMembro() {
     }
 
 
-    alert("✅ Membro cadastrado com sucesso!");
+    alert(
+        "✅ Membro cadastrado com sucesso!"
+    );
 
 
-    document.getElementById("nome").value = "";
-    document.getElementById("cargo").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("telefone").value = "";
-    document.getElementById("setor").value = "";
-
+    limparFormulario();
 
     carregarEquipa();
+
 }
 
 
+// ============================
+// EDITAR MEMBRO
+// ============================
+
+async function editarMembro(id) {
+
+    const { data, error } =
+        await supabaseClient
+            .from("equipa")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+
+    if (error) {
+
+        alert(
+            "Erro ao buscar membro: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    document.getElementById("nome").value =
+        data.nome || "";
+
+    document.getElementById("cargo").value =
+        data.cargo || "";
+
+    document.getElementById("email").value =
+        data.email || "";
+
+    document.getElementById("telefone").value =
+        data.telefone || "";
+
+    document.getElementById("setor").value =
+        data.setor || "";
+
+
+    membroEditando = id;
+
+
+    document.getElementById(
+        "tituloFormulario"
+    ).textContent = "Editar membro";
+
+
+    document.getElementById(
+        "botaoSalvar"
+    ).textContent = "Salvar alterações";
+
+
+    document.getElementById(
+        "botaoSalvar"
+    ).onclick = salvarEdicao;
+
+
+    document.getElementById(
+        "botaoCancelar"
+    ).style.display = "inline-block";
+
+}
+
+
+// ============================
+// SALVAR EDIÇÃO
+// ============================
+
+async function salvarEdicao() {
+
+    const nome =
+        document.getElementById("nome")
+        .value.trim();
+
+    const cargo =
+        document.getElementById("cargo")
+        .value.trim();
+
+    const email =
+        document.getElementById("email")
+        .value.trim();
+
+    const telefone =
+        document.getElementById("telefone")
+        .value.trim();
+
+    const setor =
+        document.getElementById("setor")
+        .value.trim();
+
+
+    if (!nome) {
+
+        alert(
+            "Digite o nome do membro."
+        );
+
+        return;
+    }
+
+
+    if (!cargo) {
+
+        alert(
+            "Digite o cargo."
+        );
+
+        return;
+    }
+
+
+    const { error } =
+        await supabaseClient
+            .from("equipa")
+            .update({
+
+                nome: nome,
+                cargo: cargo,
+                email: email,
+                telefone: telefone,
+                setor: setor
+
+            })
+            .eq("id", membroEditando);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Erro ao atualizar membro: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    alert(
+        "✅ Membro atualizado com sucesso!"
+    );
+
+
+    cancelarEdicao();
+
+    carregarEquipa();
+
+}
+
+
+// ============================
+// EXCLUIR MEMBRO
+// ============================
+
+async function excluirMembro(id) {
+
+    const confirmar =
+        confirm(
+            "Tem certeza que deseja excluir este membro?"
+        );
+
+
+    if (!confirmar) {
+        return;
+    }
+
+
+    const { error } =
+        await supabaseClient
+            .from("equipa")
+            .delete()
+            .eq("id", id);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "Erro ao excluir membro: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    alert(
+        "✅ Membro excluído com sucesso!"
+    );
+
+
+    carregarEquipa();
+
+}
+
+
+// ============================
+// CANCELAR EDIÇÃO
+// ============================
+
+function cancelarEdicao() {
+
+    membroEditando = null;
+
+    limparFormulario();
+
+
+    document.getElementById(
+        "tituloFormulario"
+    ).textContent = "Novo membro";
+
+
+    document.getElementById(
+        "botaoSalvar"
+    ).textContent = "Adicionar membro";
+
+
+    document.getElementById(
+        "botaoSalvar"
+    ).onclick = adicionarMembro;
+
+
+    document.getElementById(
+        "botaoCancelar"
+    ).style.display = "none";
+
+}
+
+
+// ============================
+// LIMPAR FORMULÁRIO
+// ============================
+
+function limparFormulario() {
+
+    document.getElementById("nome").value = "";
+
+    document.getElementById("cargo").value = "";
+
+    document.getElementById("email").value = "";
+
+    document.getElementById("telefone").value = "";
+
+    document.getElementById("setor").value = "";
+
+}
+
+
+// ============================
+// VOLTAR DASHBOARD
+// ============================
+
 function voltarDashboard() {
 
-    window.location.href = "admin.html";
+    window.location.href =
+        "admin.html";
 
 }
 
