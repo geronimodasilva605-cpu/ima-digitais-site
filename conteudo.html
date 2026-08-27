@@ -383,7 +383,11 @@ async function adicionarConteudo() {
     const data_publicacao =
         document.getElementById("data_publicacao")
         .value;
+const facebook =
+    document.getElementById("facebook").checked;
 
+const linkedin =
+    document.getElementById("linkedin").checked;
 
     if (!titulo) {
 
@@ -406,9 +410,12 @@ async function adicionarConteudo() {
                 descricao: descricao,
                 valor: Number(valor) || 0,
                 status: status,
-                data_publicacao:
-                    data_publicacao || null
+               data_publicacao:
+    data_publicacao || null,
 
+facebook: facebook,
+
+linkedin: linkedin
             }]);
 
 
