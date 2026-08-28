@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html lang="pt">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Login - IMA Digitais</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(circle at top left, #2563eb55, transparent 35%),
+        radial-gradient(circle at bottom right, #7c3aed55, transparent 35%),
+        linear-gradient(135deg, #07111f, #111827);
+
+    color: white;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 420px;
+    padding: 35px;
+
+    background: rgba(255,255,255,0.08);
+
+    border: 1px solid rgba(255,255,255,0.15);
+
+    border-radius: 20px;
+
+    backdrop-filter: blur(15px);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.4);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo h1 {
+    margin: 0;
+    font-size: 38px;
+    letter-spacing: 3px;
+}
+
+.logo p {
+    margin-top: 8px;
+    color: #cbd5e1;
+}
+
+label {
+    display: block;
+    margin-bottom: 7px;
+    color: #e2e8f0;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+
+    margin-bottom: 18px;
+
+    border: 1px solid rgba(255,255,255,0.2);
+
+    border-radius: 10px;
+
+    background: rgba(255,255,255,0.08);
+
+    color: white;
+
+    outline: none;
+
+    font-size: 15px;
+}
+
+input:focus {
+    border-color: #60a5fa;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#mensagem {
+    margin-top: 18px;
+    text-align: center;
+    color: #fca5a5;
+    min-height: 20px;
+}
+
+.rodape {
+    margin-top: 25px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login-box">
+
+```
+<div class="logo">
+
+    <h1>IMA</h1>
+
+    <p>
+        Digitais Soluções
+    </p>
+
+</div>
+
+
+<form id="loginForm">
+
+    <label for="email">
+        E-mail
+    </label>
+
+    <input
+        type="email"
+        id="email"
+        placeholder="Digite o seu e-mail"
+        required
+    >
+
+
+    <label for="senha">
+        Senha
+    </label>
+
+    <input
+        type="password"
+        id="senha"
+        placeholder="Digite a sua senha"
+        required
+    >
+
+
+    <button
+        type="submit"
+        id="botaoLogin"
+    >
+        Entrar
+    </button>
+
+</form>
+
+
+<div id="mensagem"></div>
+
+
+<div class="rodape">
+    Sistema interno • IMA Digitais Soluções
+</div>
+```
+
+</div>
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+"https://vzqndrnwgpvbawjuezsd.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_Ob3owo-lP6TCJbnTPW7Ecg_wyvaoEps";
+
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+document
+.getElementById("loginForm")
+.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+
+    const email =
+        document
+        .getElementById("email")
+        .value
+        .trim();
+
+
+    const senha =
+        document
+        .getElementById("senha")
+        .value;
+
+
+    const mensagem =
+        document
+        .getElementById("mensagem");
+
+
+    const botao =
+        document
+        .getElementById("botaoLogin");
+
+
+    mensagem.textContent = "";
+
+    botao.disabled = true;
+
+    botao.textContent =
+        "Entrando...";
+
+
+    try {
+
+        const { data, error } =
+            await supabaseClient.auth.signInWithPassword({
+
+                email: email,
+
+                password: senha
+
+            });
+
+
+        if (error) {
+
+            console.error(error);
+
+            mensagem.textContent =
+                "❌ E-mail ou senha incorretos.";
+
+            return;
+        }
+
+
+        if (!data.user) {
+
+            mensagem.textContent =
+                "❌ Não foi possível iniciar a sessão.";
+
+            return;
+        }
+
+
+        /* ==========================================
+           BUSCAR PERFIL
+        ========================================== */
+
+        const { data: perfil, error: erroPerfil } =
+            await supabaseClient
+                .from("perfis")
+                .select("setor")
+                .eq("id", data.user.id)
+                .single();
+
+
+        if (erroPerfil || !perfil) {
+
+            console.error(erroPerfil);
+
+            await supabaseClient.auth.signOut();
+
+            mensagem.textContent =
+                "❌ Usuário sem setor configurado.";
+
+            return;
+        }
+
+
+        /* ==========================================
+           GUARDAR SETOR TEMPORARIAMENTE
+        ========================================== */
+
+        sessionStorage.setItem(
+            "setor",
+            perfil.setor
+        );
+
+
+        /* ==========================================
+           ENVIAR PARA O PAINEL
+        ========================================== */
+
+        window.location.href =
+            "admin.html";
+
+    }
+
+    catch (erro) {
+
+        console.error(erro);
+
+        mensagem.textContent =
+            "❌ Ocorreu um erro ao entrar.";
+
+    }
+
+    finally {
+
+        botao.disabled = false;
+
+        botao.textContent =
+            "Entrar";
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
