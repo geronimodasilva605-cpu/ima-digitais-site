@@ -1,5 +1,5 @@
-html
 <!DOCTYPE html>
+
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -10,6 +10,7 @@ html
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -28,6 +29,7 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
+    gap: 15px;
 }
 
 .topo h1 {
@@ -41,6 +43,11 @@ button {
     cursor: pointer;
     background: #111;
     color: white;
+    font-size: 14px;
+}
+
+button:hover {
+    opacity: 0.9;
 }
 
 .voltar {
@@ -65,6 +72,12 @@ button {
     padding: 25px;
     border-radius: 12px;
     margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.formulario h2,
+.conteudos h2 {
+    margin-top: 0;
 }
 
 input,
@@ -76,6 +89,7 @@ select {
     margin: 8px 0 15px;
     border: 1px solid #ccc;
     border-radius: 7px;
+    font-size: 15px;
 }
 
 textarea {
@@ -83,9 +97,39 @@ textarea {
     resize: vertical;
 }
 
+/* CHECKBOXES */
+
+.plataformas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.plataformas label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: #f5f5f5;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.plataformas input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+/* ITENS */
+
 .item {
     padding: 18px 0;
     border-bottom: 1px solid #ddd;
+}
+
+.item:last-child {
+    border-bottom: none;
 }
 
 .item strong {
@@ -96,147 +140,237 @@ textarea {
 
 .item span {
     display: block;
-    margin: 4px 0;
+    margin: 6px 0;
 }
 
 .acoes {
     margin-top: 12px;
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
 }
+
+.mensagem {
+    padding: 12px;
+    background: #f4f4f4;
+    border-radius: 8px;
+}
+
+/* RESPONSIVO */
+
+@media (max-width: 600px) {
+
+    .container {
+        margin: 10px auto;
+        padding: 12px;
+    }
+
+    .topo {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .topo h1 {
+        font-size: 24px;
+    }
+
+    .voltar {
+        width: 100%;
+    }
+
+    .formulario,
+    .conteudos {
+        padding: 18px;
+    }
+
+}
+
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
+```
+<!-- TOPO -->
+
 <div class="topo">
 
     <h1>📢 Conteúdo IMA</h1>
 
-    <button class="voltar" onclick="voltarDashboard()">
+    <button
+        class="voltar"
+        onclick="voltarDashboard()"
+    >
         ← Dashboard
     </button>
 
 </div>
 
+
+<!-- FORMULÁRIO -->
+
 <div class="formulario">
 
-<h2 id="tituloFormulario">Novo conteúdo</h2>
-
-<input
-    id="titulo"
-    type="text"
-    placeholder="Título da publicação ou campanha"
->
-
-<select id="tipo">
-
-    <option value="Publicação">
-        Publicação
-    </option>
-
-    <option value="Campanha">
-        Campanha
-    </option>
-
-    <option value="Conteúdo">
-        Conteúdo
-    </option>
-
-</select>
-
-<input
-    id="plataforma"
-    type="text"
-    placeholder="Plataforma (Facebook, Instagram, LinkedIn...)"
->
+    <h2 id="tituloFormulario">
+        Novo conteúdo
+    </h2>
 
 
-<h3>Publicar em:</h3>
+    <input
+        id="titulo"
+        type="text"
+        placeholder="Título da publicação ou campanha"
+    >
 
-<label>
-<input type="checkbox" id="facebook">
-Facebook
-</label>
 
-<br>
+    <select id="tipo">
 
-<label>
-<input type="checkbox" id="linkedin">
-LinkedIn
-</label>
-<br><br>
+        <option value="Publicação">
+            Publicação
+        </option>
 
-<label>
-<input type="checkbox" id="instagram">
-Instagram
-</label>
-<textarea
-    id="descricao"
-    placeholder="Descrição"
-></textarea>
+        <option value="Campanha">
+            Campanha
+        </option>
 
-<input
-    id="valor"
-    type="number"
-    placeholder="Valor em Kz"
->
+        <option value="Conteúdo">
+            Conteúdo
+        </option>
 
-<select id="status">
+    </select>
 
-    <option value="Pendente">
-        Pendente
-    </option>
 
-    <option value="Em andamento">
-        Em andamento
-    </option>
+    <input
+        id="plataforma"
+        type="text"
+        placeholder="Descrição da plataforma ou campanha"
+    >
 
-    <option value="Publicado">
-        Publicado
-    </option>
 
-    <option value="Concluído">
-        Concluído
-    </option>
+    <h3>Publicar em:</h3>
 
-</select>
+    <div class="plataformas">
 
-<input
-    id="data_publicacao"
-    type="date"
->
+        <label>
+            <input
+                type="checkbox"
+                id="facebook"
+            >
+            Facebook
+        </label>
 
-<button id="botaoSalvar" onclick="adicionarConteudo()">
-    Adicionar conteúdo
-</button>
 
-<button
-    id="botaoCancelar"
-    class="cancelar"
-    onclick="cancelarEdicao()"
-    style="display:none;"
->
-    Cancelar
-</button>
+        <label>
+            <input
+                type="checkbox"
+                id="linkedin"
+            >
+            LinkedIn
+        </label>
+
+
+        <label>
+            <input
+                type="checkbox"
+                id="instagram"
+            >
+            Instagram
+        </label>
+
+    </div>
+
+
+    <textarea
+        id="descricao"
+        placeholder="Descrição"
+    ></textarea>
+
+
+    <input
+        id="valor"
+        type="number"
+        placeholder="Valor em Kz"
+        min="0"
+    >
+
+
+    <select id="status">
+
+        <option value="Pendente">
+            Pendente
+        </option>
+
+        <option value="Em andamento">
+            Em andamento
+        </option>
+
+        <option value="Publicado">
+            Publicado
+        </option>
+
+        <option value="Concluído">
+            Concluído
+        </option>
+
+    </select>
+
+
+    <input
+        id="data_publicacao"
+        type="date"
+    >
+
+
+    <button
+        id="botaoSalvar"
+        onclick="adicionarConteudo()"
+    >
+        Adicionar conteúdo
+    </button>
+
+
+    <button
+        id="botaoCancelar"
+        class="cancelar"
+        onclick="cancelarEdicao()"
+        style="display:none;"
+    >
+        Cancelar
+    </button>
 
 </div>
+
+
+<!-- LISTA -->
 
 <div class="conteudos">
 
-<h2>Publicações, campanhas e conteúdos</h2>
+    <h2>
+        Publicações, campanhas e conteúdos
+    </h2>
 
-<div id="listaConteudo">
-    Carregando conteúdos...
-</div>
+
+    <div id="listaConteudo">
+
+        <div class="mensagem">
+            Carregando conteúdos...
+        </div>
+
+    </div>
 
 </div>
+```
 
 </div>
 
 <script>
+
+/* =====================================================
+   CONFIGURAÇÃO SUPABASE
+===================================================== */
 
 const SUPABASE_URL =
 "https://vzqndrnwgpvbawjuezsd.supabase.co";
@@ -244,18 +378,32 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_Ob3owo-lP6TCJbnTPW7Ecg_wyvaoEps";
 
+
 const supabaseClient =
 window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
 
+
+/* ID DO CONTEÚDO QUE ESTÁ SENDO EDITADO */
+
 let conteudoEditando = null;
 
 
-// CARREGAR
+/* =====================================================
+   CARREGAR CONTEÚDOS
+===================================================== */
 
 async function carregarConteudo() {
+
+    const lista =
+        document.getElementById("listaConteudo");
+
+
+    lista.innerHTML =
+        '<div class="mensagem">Carregando conteúdos...</div>';
+
 
     const { data, error } =
         await supabaseClient
@@ -265,70 +413,126 @@ async function carregarConteudo() {
                 ascending: false
             });
 
-    const lista =
-        document.getElementById("listaConteudo");
 
     if (error) {
 
         console.error(error);
 
         lista.innerHTML =
-            "Erro ao carregar conteúdo: " +
+            "❌ Erro ao carregar conteúdo: " +
             error.message;
 
         return;
     }
 
+
     if (!data || data.length === 0) {
 
         lista.innerHTML =
-            "Nenhum conteúdo cadastrado ainda.";
+            '<div class="mensagem">Nenhum conteúdo cadastrado ainda.</div>';
 
         return;
     }
 
+
     lista.innerHTML = "";
+
 
     data.forEach(item => {
 
         const div =
             document.createElement("div");
 
+
         div.className = "item";
+
+
+        /* PLATAFORMAS */
+
+        let plataformas = "";
+
+
+        if (item.facebook) {
+
+            plataformas +=
+                "✅ Facebook ";
+
+        }
+
+
+        if (item.linkedin) {
+
+            plataformas +=
+                "✅ LinkedIn ";
+
+        }
+
+
+        if (item.instagram) {
+
+            plataformas +=
+                "✅ Instagram ";
+
+        }
+
+
+        if (!plataformas) {
+
+            plataformas =
+                "Nenhuma plataforma selecionada";
+
+        }
+
 
         div.innerHTML = `
 
             <strong>
-                ${item.titulo || ""}
+                ${escaparHTML(item.titulo || "")}
             </strong>
 
-            <span>
-                Tipo: ${item.tipo || ""}
-            </span>
 
             <span>
-                Plataforma: ${item.plataforma || ""}
-            </span>
-<span>
-    Publicar em:
-    ${item.facebook ? "✅ Facebook " : ""}
-    ${item.linkedin ? "✅ LinkedIn " : ""}
-</span>
-            <span>
-                Descrição: ${item.descricao || ""}
+                <b>Tipo:</b>
+                ${escaparHTML(item.tipo || "")}
             </span>
 
-            <span>
-                Valor: ${Number(item.valor || 0).toLocaleString("pt-AO")} Kz
-            </span>
 
             <span>
-                Status: ${item.status || ""}
+                <b>Plataforma:</b>
+                ${escaparHTML(item.plataforma || "")}
             </span>
 
+
             <span>
-                Data: ${item.data_publicacao || ""}
+                <b>Publicar em:</b>
+                ${plataformas}
             </span>
+
+
+            <span>
+                <b>Descrição:</b>
+                ${escaparHTML(item.descricao || "")}
+            </span>
+
+
+            <span>
+                <b>Valor:</b>
+                ${Number(item.valor || 0).toLocaleString("pt-AO")}
+                Kz
+            </span>
+
+
+            <span>
+                <b>Status:</b>
+                ${escaparHTML(item.status || "")}
+            </span>
+
+
+            <span>
+                <b>Data:</b>
+                ${item.data_publicacao || "Não definida"}
+            </span>
+
 
             <div class="acoes">
 
@@ -338,6 +542,7 @@ async function carregarConteudo() {
                 >
                     ✏️ Editar
                 </button>
+
 
                 <button
                     class="excluir"
@@ -350,48 +555,84 @@ async function carregarConteudo() {
 
         `;
 
+
         lista.appendChild(div);
 
     });
+
 }
 
 
-// ADICIONAR
+/* =====================================================
+   ADICIONAR CONTEÚDO
+===================================================== */
 
 async function adicionarConteudo() {
 
     const titulo =
-        document.getElementById("titulo")
-        .value.trim();
+        document
+            .getElementById("titulo")
+            .value
+            .trim();
+
 
     const tipo =
-        document.getElementById("tipo")
-        .value;
+        document
+            .getElementById("tipo")
+            .value;
+
 
     const plataforma =
-        document.getElementById("plataforma")
-        .value.trim();
+        document
+            .getElementById("plataforma")
+            .value
+            .trim();
+
 
     const descricao =
-        document.getElementById("descricao")
-        .value.trim();
+        document
+            .getElementById("descricao")
+            .value
+            .trim();
+
 
     const valor =
-        document.getElementById("valor")
-        .value;
+        document
+            .getElementById("valor")
+            .value;
+
 
     const status =
-        document.getElementById("status")
-        .value;
+        document
+            .getElementById("status")
+            .value;
+
 
     const data_publicacao =
-        document.getElementById("data_publicacao")
-        .value;
-const facebook =
-    document.getElementById("facebook").checked;
+        document
+            .getElementById("data_publicacao")
+            .value;
 
-const linkedin =
-    document.getElementById("linkedin").checked;
+
+    const facebook =
+        document
+            .getElementById("facebook")
+            .checked;
+
+
+    const linkedin =
+        document
+            .getElementById("linkedin")
+            .checked;
+
+
+    const instagram =
+        document
+            .getElementById("instagram")
+            .checked;
+
+
+    /* VALIDAR TÍTULO */
 
     if (!titulo) {
 
@@ -401,8 +642,9 @@ const linkedin =
 
         return;
     }
-facebook: facebook,
-linkedin: linkedin
+
+
+    /* INSERIR NO SUPABASE */
 
     const { error } =
         await supabaseClient
@@ -410,26 +652,41 @@ linkedin: linkedin
             .insert([{
 
                 titulo: titulo,
+
                 tipo: tipo,
+
                 plataforma: plataforma,
+
                 descricao: descricao,
-                valor: Number(valor) || 0,
+
+                valor:
+                    Number(valor) || 0,
+
                 status: status,
-               data_publicacao:
-    data_publicacao || null,
 
-facebook: facebook,
+                data_publicacao:
+                    data_publicacao || null,
 
-linkedin: linkedin
+                facebook:
+                    facebook,
+
+                linkedin:
+                    linkedin,
+
+                instagram:
+                    instagram
+
             }]);
 
+
+    /* VERIFICAR ERRO */
 
     if (error) {
 
         console.error(error);
 
         alert(
-            "Erro ao cadastrar conteúdo: " +
+            "❌ Erro ao cadastrar conteúdo:\n\n" +
             error.message
         );
 
@@ -441,13 +698,18 @@ linkedin: linkedin
         "✅ Conteúdo cadastrado com sucesso!"
     );
 
+
     limparFormulario();
 
+
     carregarConteudo();
+
 }
 
 
-// EDITAR
+/* =====================================================
+   EDITAR CONTEÚDO
+===================================================== */
 
 async function editarConteudo(id) {
 
@@ -461,8 +723,10 @@ async function editarConteudo(id) {
 
     if (error) {
 
+        console.error(error);
+
         alert(
-            "Erro ao buscar conteúdo: " +
+            "❌ Erro ao buscar conteúdo:\n\n" +
             error.message
         );
 
@@ -470,88 +734,185 @@ async function editarConteudo(id) {
     }
 
 
-    document.getElementById("titulo").value =
-        data.titulo || "";
+    /* PREENCHER FORMULÁRIO */
 
-    document.getElementById("tipo").value =
-        data.tipo || "Conteúdo";
+    document
+        .getElementById("titulo")
+        .value =
+            data.titulo || "";
 
-    document.getElementById("plataforma").value =
-        data.plataforma || "";
 
-    document.getElementById("descricao").value =
-        data.descricao || "";
+    document
+        .getElementById("tipo")
+        .value =
+            data.tipo || "Publicação";
 
-    document.getElementById("valor").value =
-        data.valor || 0;
 
-    document.getElementById("status").value =
-        data.status || "Pendente";
+    document
+        .getElementById("plataforma")
+        .value =
+            data.plataforma || "";
 
-    document.getElementById("data_publicacao").value =
-        data.data_publicacao || "";
 
+    document
+        .getElementById("descricao")
+        .value =
+            data.descricao || "";
+
+
+    document
+        .getElementById("valor")
+        .value =
+            data.valor || 0;
+
+
+    document
+        .getElementById("status")
+        .value =
+            data.status || "Pendente";
+
+
+    document
+        .getElementById("data_publicacao")
+        .value =
+            data.data_publicacao || "";
+
+
+    /* CHECKBOXES */
+
+    document
+        .getElementById("facebook")
+        .checked =
+            data.facebook === true;
+
+
+    document
+        .getElementById("linkedin")
+        .checked =
+            data.linkedin === true;
+
+
+    document
+        .getElementById("instagram")
+        .checked =
+            data.instagram === true;
+
+
+    /* GUARDAR ID */
 
     conteudoEditando = id;
 
 
-    document.getElementById(
-        "tituloFormulario"
-    ).textContent =
-        "Editar conteúdo";
+    /* ALTERAR TÍTULO */
+
+    document
+        .getElementById("tituloFormulario")
+        .textContent =
+            "Editar conteúdo";
 
 
-    document.getElementById(
-        "botaoSalvar"
-    ).textContent =
+    /* ALTERAR BOTÃO */
+
+    const botaoSalvar =
+        document.getElementById("botaoSalvar");
+
+
+    botaoSalvar.textContent =
         "Salvar alterações";
 
 
-    document.getElementById(
-        "botaoSalvar"
-    ).onclick =
+    botaoSalvar.onclick =
         salvarEdicao;
 
 
-    document.getElementById(
-        "botaoCancelar"
-    ).style.display =
-        "inline-block";
+    /* MOSTRAR CANCELAR */
+
+    document
+        .getElementById("botaoCancelar")
+        .style.display =
+            "inline-block";
+
+
+    /* IR PARA O FORMULÁRIO */
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
 }
 
 
-// SALVAR EDIÇÃO
+/* =====================================================
+   SALVAR EDIÇÃO
+===================================================== */
 
 async function salvarEdicao() {
 
     const titulo =
-        document.getElementById("titulo")
-        .value.trim();
+        document
+            .getElementById("titulo")
+            .value
+            .trim();
+
 
     const tipo =
-        document.getElementById("tipo")
-        .value;
+        document
+            .getElementById("tipo")
+            .value;
+
 
     const plataforma =
-        document.getElementById("plataforma")
-        .value.trim();
+        document
+            .getElementById("plataforma")
+            .value
+            .trim();
+
 
     const descricao =
-        document.getElementById("descricao")
-        .value.trim();
+        document
+            .getElementById("descricao")
+            .value
+            .trim();
+
 
     const valor =
-        document.getElementById("valor")
-        .value;
+        document
+            .getElementById("valor")
+            .value;
+
 
     const status =
-        document.getElementById("status")
-        .value;
+        document
+            .getElementById("status")
+            .value;
+
 
     const data_publicacao =
-        document.getElementById("data_publicacao")
-        .value;
+        document
+            .getElementById("data_publicacao")
+            .value;
 
+
+    const facebook =
+        document
+            .getElementById("facebook")
+            .checked;
+
+
+    const linkedin =
+        document
+            .getElementById("linkedin")
+            .checked;
+
+
+    const instagram =
+        document
+            .getElementById("instagram")
+            .checked;
+
+
+    /* VALIDAR */
 
     if (!titulo) {
 
@@ -563,30 +924,63 @@ async function salvarEdicao() {
     }
 
 
+    if (!conteudoEditando) {
+
+        alert(
+            "Nenhum conteúdo selecionado para edição."
+        );
+
+        return;
+    }
+
+
+    /* ATUALIZAR */
+
     const { error } =
         await supabaseClient
             .from("conteudo")
             .update({
 
                 titulo: titulo,
+
                 tipo: tipo,
+
                 plataforma: plataforma,
+
                 descricao: descricao,
-                valor: Number(valor) || 0,
+
+                valor:
+                    Number(valor) || 0,
+
                 status: status,
+
                 data_publicacao:
-                    data_publicacao || null
+                    data_publicacao || null,
+
+                facebook:
+                    facebook,
+
+                linkedin:
+                    linkedin,
+
+                instagram:
+                    instagram
 
             })
-            .eq("id", conteudoEditando);
+            .eq(
+                "id",
+                conteudoEditando
+            );
 
+
+    /* ERRO */
 
     if (error) {
 
         console.error(error);
 
         alert(
-            "Erro ao atualizar: " +
+            "❌ Erro ao atualizar:\n\n" +
             error.message
         );
 
@@ -598,19 +992,28 @@ async function salvarEdicao() {
         "✅ Conteúdo atualizado com sucesso!"
     );
 
+
     cancelarEdicao();
 
+
     carregarConteudo();
+
 }
 
 
-// EXCLUIR
+/* =====================================================
+   EXCLUIR
+===================================================== */
 
 async function excluirConteudo(id) {
 
-    if (!confirm(
-        "Tem certeza que deseja excluir este conteúdo?"
-    )) {
+    const confirmar =
+        confirm(
+            "Tem certeza que deseja excluir este conteúdo?"
+        );
+
+
+    if (!confirmar) {
 
         return;
     }
@@ -620,7 +1023,10 @@ async function excluirConteudo(id) {
         await supabaseClient
             .from("conteudo")
             .delete()
-            .eq("id", id);
+            .eq(
+                "id",
+                id
+            );
 
 
     if (error) {
@@ -628,7 +1034,7 @@ async function excluirConteudo(id) {
         console.error(error);
 
         alert(
-            "Erro ao excluir: " +
+            "❌ Erro ao excluir:\n\n" +
             error.message
         );
 
@@ -640,73 +1046,143 @@ async function excluirConteudo(id) {
         "✅ Conteúdo excluído com sucesso!"
     );
 
+
     carregarConteudo();
+
 }
 
 
-// CANCELAR
+/* =====================================================
+   CANCELAR EDIÇÃO
+===================================================== */
 
 function cancelarEdicao() {
 
     conteudoEditando = null;
 
+
     limparFormulario();
 
-    document.getElementById(
-        "tituloFormulario"
-    ).textContent =
-        "Novo conteúdo";
 
-    document.getElementById(
-        "botaoSalvar"
-    ).textContent =
+    document
+        .getElementById("tituloFormulario")
+        .textContent =
+            "Novo conteúdo";
+
+
+    const botaoSalvar =
+        document.getElementById("botaoSalvar");
+
+
+    botaoSalvar.textContent =
         "Adicionar conteúdo";
 
-    document.getElementById(
-        "botaoSalvar"
-    ).onclick =
+
+    botaoSalvar.onclick =
         adicionarConteudo;
 
-    document.getElementById(
-        "botaoCancelar"
-    ).style.display =
-        "none";
+
+    document
+        .getElementById("botaoCancelar")
+        .style.display =
+            "none";
+
 }
 
 
-// LIMPAR
+/* =====================================================
+   LIMPAR FORMULÁRIO
+===================================================== */
 
 function limparFormulario() {
 
-    document.getElementById("titulo").value = "";
+    document
+        .getElementById("titulo")
+        .value = "";
 
-    document.getElementById("tipo").value =
-        "Publicação";
 
-    document.getElementById("plataforma").value = "";
+    document
+        .getElementById("tipo")
+        .value =
+            "Publicação";
 
-    document.getElementById("descricao").value = "";
 
-    document.getElementById("valor").value = "";
+    document
+        .getElementById("plataforma")
+        .value = "";
 
-    document.getElementById("status").value =
-        "Pendente";
 
-    document.getElementById("data_publicacao").value = "";
+    document
+        .getElementById("descricao")
+        .value = "";
 
-    document.getElementById("facebook").checked = false;
 
-    document.getElementById("linkedin").checked = false;
+    document
+        .getElementById("valor")
+        .value = "";
+
+
+    document
+        .getElementById("status")
+        .value =
+            "Pendente";
+
+
+    document
+        .getElementById("data_publicacao")
+        .value = "";
+
+
+    document
+        .getElementById("facebook")
+        .checked = false;
+
+
+    document
+        .getElementById("linkedin")
+        .checked = false;
+
+
+    document
+        .getElementById("instagram")
+        .checked = false;
+
 }
 
-// VOLTAR
+
+/* =====================================================
+   VOLTAR PARA DASHBOARD
+===================================================== */
 
 function voltarDashboard() {
 
     window.location.href =
         "admin.html";
+
 }
 
+
+/* =====================================================
+   SEGURANÇA
+   Evita inserir HTML diretamente vindo do banco
+===================================================== */
+
+function escaparHTML(texto) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        texto;
+
+    return div.innerHTML;
+
+}
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
 
 carregarConteudo();
 
@@ -714,8 +1190,3 @@ carregarConteudo();
 
 </body>
 </html>
-```
-Publicar em:
-
-☐ Facebook
-☐ LinkedIn
