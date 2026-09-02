@@ -1,20 +1,49 @@
-```html
 <!DOCTYPE html>
+
 <html lang="pt">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>Design - IMA Digitais</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background: #f4f6f8;
+    background:
+        linear-gradient(135deg, #eef2ff, #f8fafc);
     color: #222;
+}
+
+#carregando {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #0f172a;
+    color: white;
+
+    font-size: 18px;
+
+    z-index: 9999;
+}
+
+#conteudoPagina {
+    display: none;
 }
 
 .container {
@@ -27,6 +56,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 15px;
+
     margin-bottom: 25px;
 }
 
@@ -36,11 +67,19 @@ body {
 
 button {
     border: 0;
+
     padding: 10px 15px;
+
     border-radius: 8px;
+
     cursor: pointer;
+
     background: #111;
     color: white;
+}
+
+button:hover {
+    opacity: 0.9;
 }
 
 .voltar {
@@ -62,20 +101,33 @@ button {
 .formulario,
 .designs {
     background: white;
+
     padding: 25px;
+
     border-radius: 12px;
+
     margin-bottom: 25px;
+
+    box-shadow:
+        0 5px 20px rgba(0,0,0,0.05);
 }
 
 input,
 textarea,
 select {
     width: 100%;
+
     box-sizing: border-box;
+
     padding: 12px;
+
     margin: 8px 0 15px;
+
     border: 1px solid #ccc;
+
     border-radius: 7px;
+
+    font-size: 15px;
 }
 
 textarea {
@@ -85,144 +137,256 @@ textarea {
 
 .design {
     padding: 18px 0;
+
     border-bottom: 1px solid #ddd;
+}
+
+.design:last-child {
+    border-bottom: 0;
 }
 
 .design strong {
     display: block;
+
     font-size: 19px;
+
     margin-bottom: 7px;
 }
 
 .design span {
     display: block;
+
     margin: 4px 0;
 }
 
 .acoes {
     margin-top: 12px;
+
     display: flex;
+
     gap: 8px;
+
+    flex-wrap: wrap;
 }
+
+.erro {
+    text-align: center;
+
+    padding: 35px;
+
+    color: #b91c1c;
+}
+
+.usuario {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 8px;
+
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+@media (max-width: 600px) {
+
+    .container {
+        margin: 10px auto;
+        padding: 12px;
+    }
+
+    .topo {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .voltar {
+        width: 100%;
+    }
+
+}
+
 </style>
+
 </head>
 
 <body>
 
+<!-- TELA DE VERIFICAÇÃO -->
+
+<div id="carregando">
+    🔐 Verificando acesso...
+</div>
+
+<!-- CONTEÚDO DA PÁGINA -->
+
+<div id="conteudoPagina">
+
 <div class="container">
 
+```
 <div class="topo">
 
-    <h1>🎨 Design IMA</h1>
+    <div>
 
-    <button class="voltar" onclick="voltarDashboard()">
+        <h1>
+            🎨 Design IMA
+        </h1>
+
+        <div class="usuario">
+
+            <span>
+                Acesso:
+            </span>
+
+            <strong id="setorUsuario">
+                Design
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <button
+        class="voltar"
+        onclick="voltarDashboard()"
+    >
         ← Dashboard
     </button>
 
 </div>
 
 
+<!-- FORMULÁRIO -->
+
 <div class="formulario">
 
-<h2 id="tituloFormulario">Novo trabalho de Design</h2>
+    <h2 id="tituloFormulario">
+        Novo trabalho de Design
+    </h2>
 
-<input
-    id="nome"
-    type="text"
-    placeholder="Nome do trabalho"
->
 
-<input
-    id="cliente"
-    type="text"
-    placeholder="Nome do cliente"
->
+    <input
+        id="nome"
+        type="text"
+        placeholder="Nome do trabalho"
+    >
 
-<select id="tipo">
 
-    <option value="Logotipo">
-        Logotipo
-    </option>
+    <input
+        id="cliente"
+        type="text"
+        placeholder="Nome do cliente"
+    >
 
-    <option value="Flyer">
-        Flyer
-    </option>
 
-    <option value="Cartaz">
-        Cartaz
-    </option>
+    <select id="tipo">
 
-    <option value="Banner">
-        Banner
-    </option>
+        <option value="Logotipo">
+            Logotipo
+        </option>
 
-    <option value="Identidade Visual">
-        Identidade Visual
-    </option>
+        <option value="Flyer">
+            Flyer
+        </option>
 
-    <option value="Outro">
-        Outro
-    </option>
+        <option value="Cartaz">
+            Cartaz
+        </option>
 
-</select>
+        <option value="Banner">
+            Banner
+        </option>
 
-<textarea
-    id="descricao"
-    placeholder="Descrição do trabalho"
-></textarea>
+        <option value="Identidade Visual">
+            Identidade Visual
+        </option>
 
-<input
-    id="valor"
-    type="number"
-    placeholder="Valor em Kz"
->
+        <option value="Outro">
+            Outro
+        </option>
 
-<select id="status">
+    </select>
 
-    <option value="Pendente">
-        Pendente
-    </option>
 
-    <option value="Em andamento">
-        Em andamento
-    </option>
+    <textarea
+        id="descricao"
+        placeholder="Descrição do trabalho"
+    ></textarea>
 
-    <option value="Concluído">
-        Concluído
-    </option>
 
-</select>
+    <input
+        id="valor"
+        type="number"
+        placeholder="Valor em Kz"
+        min="0"
+    >
 
-<button id="botaoSalvar" onclick="adicionarDesign()">
-    Adicionar trabalho
-</button>
 
-<button
-    id="botaoCancelar"
-    class="cancelar"
-    onclick="cancelarEdicao()"
-    style="display:none;"
->
-    Cancelar
-</button>
+    <select id="status">
+
+        <option value="Pendente">
+            Pendente
+        </option>
+
+        <option value="Em andamento">
+            Em andamento
+        </option>
+
+        <option value="Concluído">
+            Concluído
+        </option>
+
+    </select>
+
+
+    <button
+        id="botaoSalvar"
+        onclick="adicionarDesign()"
+    >
+        Adicionar trabalho
+    </button>
+
+
+    <button
+        id="botaoCancelar"
+        class="cancelar"
+        onclick="cancelarEdicao()"
+        style="display:none;"
+    >
+        Cancelar
+    </button>
 
 </div>
 
+
+<!-- LISTA -->
 
 <div class="designs">
 
-<h2>Trabalhos de Design cadastrados</h2>
+    <h2>
+        Trabalhos de Design cadastrados
+    </h2>
 
-<div id="listaDesign">
-    Carregando trabalhos...
+
+    <div id="listaDesign">
+        Carregando trabalhos...
+    </div>
+
+</div>
+```
+
 </div>
 
 </div>
-
-</div>
-
 
 <script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
 
 const SUPABASE_URL =
 "https://vzqndrnwgpvbawjuezsd.supabase.co";
@@ -236,16 +400,233 @@ window.supabase.createClient(
     SUPABASE_KEY
 );
 
+
 let designEditando = null;
 
+let usuarioAtual = null;
 
-// ============================
-// CARREGAR DESIGN
-// ============================
+let perfilAtual = null;
+
+
+/* =====================================================
+   ELEMENTOS
+===================================================== */
+
+const carregando =
+document.getElementById("carregando");
+
+const conteudoPagina =
+document.getElementById("conteudoPagina");
+
+
+/* =====================================================
+   VERIFICAR ACESSO
+===================================================== */
+
+async function verificarAcesso() {
+
+    try {
+
+        const {
+            data: sessaoData,
+            error: sessaoError
+        } =
+            await supabaseClient.auth.getSession();
+
+
+        if (sessaoError) {
+
+            console.error(sessaoError);
+
+            bloquearAcesso(
+                "Erro ao verificar a sessão."
+            );
+
+            return;
+        }
+
+
+        if (!sessaoData.session) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        usuarioAtual =
+            sessaoData.session.user;
+
+
+        /* =============================================
+           BUSCAR PERFIL
+        ============================================= */
+
+        const {
+            data: perfil,
+            error: perfilError
+        } =
+            await supabaseClient
+                .from("perfis")
+                .select("id,nome,email,setor")
+                .eq("id", usuarioAtual.id)
+                .maybeSingle();
+
+
+        if (perfilError) {
+
+            console.error(
+                "Erro ao buscar perfil:",
+                perfilError
+            );
+
+            bloquearAcesso(
+                "Não foi possível verificar o seu perfil."
+            );
+
+            return;
+        }
+
+
+        if (!perfil) {
+
+            bloquearAcesso(
+                "Seu perfil não está configurado."
+            );
+
+            return;
+        }
+
+
+        perfilAtual =
+            perfil;
+
+
+        const setor =
+            (perfil.setor || "")
+                .toLowerCase()
+                .trim();
+
+
+        /* =============================================
+           PERMISSÃO
+        ============================================= */
+
+        const permitido =
+            setor === "design" ||
+            setor === "administrador";
+
+
+        if (!permitido) {
+
+            bloquearAcesso(
+                "🚫 Acesso negado. Esta área é exclusiva do setor Design."
+            );
+
+            return;
+        }
+
+
+        /* =============================================
+           MOSTRAR PÁGINA
+        ============================================= */
+
+        document
+            .getElementById("setorUsuario")
+            .textContent =
+                perfil.setor;
+
+
+        carregando.style.display =
+            "none";
+
+
+        conteudoPagina.style.display =
+            "block";
+
+
+        carregarDesign();
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        bloquearAcesso(
+            "Erro inesperado ao verificar o acesso."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   BLOQUEAR
+===================================================== */
+
+function bloquearAcesso(
+    mensagem
+) {
+
+    carregando.innerHTML = `
+        <div style="
+            text-align:center;
+            padding:20px;
+        ">
+            <div style="
+                font-size:50px;
+                margin-bottom:15px;
+            ">
+                🔒
+            </div>
+
+            <div style="
+                font-size:18px;
+                margin-bottom:20px;
+            ">
+                ${mensagem}
+            </div>
+
+            <button
+                onclick="window.location.href='admin.html'"
+                style="
+                    background:#2563eb;
+                    padding:12px 18px;
+                    border:0;
+                    border-radius:8px;
+                    color:white;
+                    cursor:pointer;
+                "
+            >
+                ← Voltar ao Dashboard
+            </button>
+        </div>
+    `;
+
+}
+
+
+/* =====================================================
+   CARREGAR DESIGN
+===================================================== */
 
 async function carregarDesign() {
 
-    const { data, error } =
+    const lista =
+        document.getElementById(
+            "listaDesign"
+        );
+
+
+    lista.innerHTML =
+        "Carregando trabalhos...";
+
+
+    const {
+        data,
+        error
+    } =
         await supabaseClient
             .from("design")
             .select("*")
@@ -253,16 +634,13 @@ async function carregarDesign() {
                 ascending: false
             });
 
-    const lista =
-        document.getElementById("listaDesign");
-
 
     if (error) {
 
         console.error(error);
 
         lista.innerHTML =
-            "Erro ao carregar Design: " +
+            "❌ Erro ao carregar Design: " +
             error.message;
 
         return;
@@ -286,33 +664,41 @@ async function carregarDesign() {
         const div =
             document.createElement("div");
 
-        div.className = "design";
+
+        div.className =
+            "design";
 
 
         div.innerHTML = `
 
             <strong>
-                ${item.nome || ""}
+                ${escaparHTML(item.nome || "")}
             </strong>
 
             <span>
-                Cliente: ${item.cliente || ""}
+                Cliente:
+                ${escaparHTML(item.cliente || "")}
             </span>
 
             <span>
-                Tipo: ${item.tipo || ""}
+                Tipo:
+                ${escaparHTML(item.tipo || "")}
             </span>
 
             <span>
-                Descrição: ${item.descricao || ""}
+                Descrição:
+                ${escaparHTML(item.descricao || "")}
             </span>
 
             <span>
-                Valor: ${Number(item.valor || 0).toLocaleString("pt-AO")} Kz
+                Valor:
+                ${Number(item.valor || 0)
+                    .toLocaleString("pt-AO")} Kz
             </span>
 
             <span>
-                Status: ${item.status || ""}
+                Status:
+                ${escaparHTML(item.status || "")}
             </span>
 
             <div class="acoes">
@@ -343,35 +729,40 @@ async function carregarDesign() {
 }
 
 
-// ============================
-// ADICIONAR DESIGN
-// ============================
+/* =====================================================
+   ADICIONAR
+===================================================== */
 
 async function adicionarDesign() {
 
     const nome =
         document.getElementById("nome")
-        .value.trim();
+            .value.trim();
+
 
     const cliente =
         document.getElementById("cliente")
-        .value.trim();
+            .value.trim();
+
 
     const tipo =
         document.getElementById("tipo")
-        .value;
+            .value;
+
 
     const descricao =
         document.getElementById("descricao")
-        .value.trim();
+            .value.trim();
+
 
     const valor =
         document.getElementById("valor")
-        .value;
+            .value;
+
 
     const status =
         document.getElementById("status")
-        .value;
+            .value;
 
 
     if (!nome) {
@@ -384,17 +775,42 @@ async function adicionarDesign() {
     }
 
 
-    const { error } =
+    if (!usuarioAtual) {
+
+        alert(
+            "Sessão do usuário não encontrada."
+        );
+
+        return;
+    }
+
+
+    /* =============================================
+       GRAVAR COM O ID DO USUÁRIO
+    ============================================= */
+
+    const {
+        error
+    } =
         await supabaseClient
             .from("design")
             .insert([{
 
                 nome: nome,
+
                 cliente: cliente,
+
                 tipo: tipo,
+
                 descricao: descricao,
-                valor: Number(valor) || 0,
-                status: status
+
+                valor:
+                    Number(valor) || 0,
+
+                status: status,
+
+                usuario_id:
+                    usuarioAtual.id
 
             }]);
 
@@ -404,7 +820,7 @@ async function adicionarDesign() {
         console.error(error);
 
         alert(
-            "Erro ao cadastrar Design: " +
+            "❌ Erro ao cadastrar Design:\n\n" +
             error.message
         );
 
@@ -419,18 +835,22 @@ async function adicionarDesign() {
 
     limparFormulario();
 
+
     carregarDesign();
 
 }
 
 
-// ============================
-// EDITAR DESIGN
-// ============================
+/* =====================================================
+   EDITAR
+===================================================== */
 
 async function editarDesign(id) {
 
-    const { data, error } =
+    const {
+        data,
+        error
+    } =
         await supabaseClient
             .from("design")
             .select("*")
@@ -440,8 +860,10 @@ async function editarDesign(id) {
 
     if (error) {
 
+        console.error(error);
+
         alert(
-            "Erro ao buscar trabalho: " +
+            "Erro ao buscar trabalho:\n\n" +
             error.message
         );
 
@@ -452,17 +874,22 @@ async function editarDesign(id) {
     document.getElementById("nome").value =
         data.nome || "";
 
+
     document.getElementById("cliente").value =
         data.cliente || "";
+
 
     document.getElementById("tipo").value =
         data.tipo || "Outro";
 
+
     document.getElementById("descricao").value =
         data.descricao || "";
 
+
     document.getElementById("valor").value =
         data.valor || 0;
+
 
     document.getElementById("status").value =
         data.status || "Pendente";
@@ -494,38 +921,49 @@ async function editarDesign(id) {
     ).style.display =
         "inline-block";
 
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
 }
 
 
-// ============================
-// SALVAR EDIÇÃO
-// ============================
+/* =====================================================
+   SALVAR EDIÇÃO
+===================================================== */
 
 async function salvarEdicao() {
 
     const nome =
         document.getElementById("nome")
-        .value.trim();
+            .value.trim();
+
 
     const cliente =
         document.getElementById("cliente")
-        .value.trim();
+            .value.trim();
+
 
     const tipo =
         document.getElementById("tipo")
-        .value;
+            .value;
+
 
     const descricao =
         document.getElementById("descricao")
-        .value.trim();
+            .value.trim();
+
 
     const valor =
         document.getElementById("valor")
-        .value;
+            .value;
+
 
     const status =
         document.getElementById("status")
-        .value;
+            .value;
 
 
     if (!nome) {
@@ -538,20 +976,31 @@ async function salvarEdicao() {
     }
 
 
-    const { error } =
+    const {
+        error
+    } =
         await supabaseClient
             .from("design")
             .update({
 
                 nome: nome,
+
                 cliente: cliente,
+
                 tipo: tipo,
+
                 descricao: descricao,
-                valor: Number(valor) || 0,
+
+                valor:
+                    Number(valor) || 0,
+
                 status: status
 
             })
-            .eq("id", designEditando);
+            .eq(
+                "id",
+                designEditando
+            );
 
 
     if (error) {
@@ -559,7 +1008,7 @@ async function salvarEdicao() {
         console.error(error);
 
         alert(
-            "Erro ao atualizar Design: " +
+            "❌ Erro ao atualizar Design:\n\n" +
             error.message
         );
 
@@ -574,14 +1023,15 @@ async function salvarEdicao() {
 
     cancelarEdicao();
 
+
     carregarDesign();
 
 }
 
 
-// ============================
-// EXCLUIR DESIGN
-// ============================
+/* =====================================================
+   EXCLUIR
+===================================================== */
 
 async function excluirDesign(id) {
 
@@ -592,15 +1042,21 @@ async function excluirDesign(id) {
 
 
     if (!confirmar) {
+
         return;
     }
 
 
-    const { error } =
+    const {
+        error
+    } =
         await supabaseClient
             .from("design")
             .delete()
-            .eq("id", id);
+            .eq(
+                "id",
+                id
+            );
 
 
     if (error) {
@@ -608,7 +1064,7 @@ async function excluirDesign(id) {
         console.error(error);
 
         alert(
-            "Erro ao excluir Design: " +
+            "❌ Erro ao excluir Design:\n\n" +
             error.message
         );
 
@@ -626,13 +1082,14 @@ async function excluirDesign(id) {
 }
 
 
-// ============================
-// CANCELAR EDIÇÃO
-// ============================
+/* =====================================================
+   CANCELAR
+===================================================== */
 
 function cancelarEdicao() {
 
     designEditando = null;
+
 
     limparFormulario();
 
@@ -663,31 +1120,42 @@ function cancelarEdicao() {
 }
 
 
-// ============================
-// LIMPAR FORMULÁRIO
-// ============================
+/* =====================================================
+   LIMPAR
+===================================================== */
 
 function limparFormulario() {
 
-    document.getElementById("nome").value = "";
+    document.getElementById("nome")
+        .value = "";
 
-    document.getElementById("cliente").value = "";
 
-    document.getElementById("tipo").value = "Logotipo";
+    document.getElementById("cliente")
+        .value = "";
 
-    document.getElementById("descricao").value = "";
 
-    document.getElementById("valor").value = "";
+    document.getElementById("tipo")
+        .value = "Logotipo";
 
-    document.getElementById("status").value =
-        "Pendente";
+
+    document.getElementById("descricao")
+        .value = "";
+
+
+    document.getElementById("valor")
+        .value = "";
+
+
+    document.getElementById("status")
+        .value =
+            "Pendente";
 
 }
 
 
-// ============================
-// VOLTAR
-// ============================
+/* =====================================================
+   VOLTAR
+===================================================== */
 
 function voltarDashboard() {
 
@@ -697,10 +1165,30 @@ function voltarDashboard() {
 }
 
 
-carregarDesign();
+/* =====================================================
+   ESCAPAR HTML
+===================================================== */
+
+function escaparHTML(texto) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        texto;
+
+    return div.innerHTML;
+
+}
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+verificarAcesso();
 
 </script>
 
 </body>
 </html>
-```
