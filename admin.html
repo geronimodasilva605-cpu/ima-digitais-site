@@ -1,193 +1,1723 @@
 <!DOCTYPE html>
+
 <html lang="pt">
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Painel IMA Digitais</title>
 
-<link rel="stylesheet" href="admin.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #f8fafc;
+    overflow-x: hidden;
+}
+
+
+/* =====================================================
+   FUNDO ANIMADO
+===================================================== */
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(90px);
+    z-index: -2;
+    opacity: 0.45;
+}
+
+body::before {
+    background: #2563eb;
+    top: -180px;
+    left: -180px;
+    animation: mover1 12s ease-in-out infinite alternate;
+}
+
+body::after {
+    background: #7c3aed;
+    right: -180px;
+    bottom: -180px;
+    animation: mover2 15s ease-in-out infinite alternate;
+}
+
+@keyframes mover1 {
+    from {
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        transform: translate(160px, 120px) scale(1.25);
+    }
+}
+
+@keyframes mover2 {
+    from {
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        transform: translate(-160px, -120px) scale(1.2);
+    }
+}
+
+
+/* =====================================================
+   FUNDO PRINCIPAL
+===================================================== */
+
+.app {
+    min-height: 100vh;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(2, 6, 23, 0.97),
+            rgba(15, 23, 42, 0.94)
+        );
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    width: 265px;
+    height: 100vh;
+
+    padding: 25px 18px;
+
+    background:
+        rgba(15, 23, 42, 0.88);
+
+    border-right:
+        1px solid rgba(255,255,255,0.08);
+
+    backdrop-filter: blur(18px);
+
+    overflow-y: auto;
+
+    z-index: 10;
+}
+
+.brand {
+    font-size: 13px;
+    letter-spacing: 4px;
+    font-weight: bold;
+    color: #cbd5e1;
+
+    margin: 4px 10px 35px;
+}
+
+.brand span {
+    display: block;
+
+    font-size: 34px;
+    letter-spacing: 2px;
+
+    color: #ffffff;
+}
+
+.menu-title {
+    margin: 22px 12px 10px;
+
+    font-size: 10px;
+    letter-spacing: 1.7px;
+
+    color: #64748b;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px 14px;
+    margin: 5px 0;
+
+    border-radius: 10px;
+
+    color: #cbd5e1;
+    text-decoration: none;
+
+    font-size: 14px;
+
+    transition:
+        background 0.25s ease,
+        transform 0.25s ease,
+        color 0.25s ease;
+}
+
+.sidebar a:hover {
+    background: rgba(255,255,255,0.07);
+    color: white;
+    transform: translateX(3px);
+}
+
+.sidebar a.active {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(37,99,235,0.35),
+            rgba(124,58,237,0.18)
+        );
+
+    color: white;
+
+    border:
+        1px solid rgba(96,165,250,0.18);
+}
+
+.setor-box {
+    margin-top: 25px;
+
+    padding: 14px;
+
+    border-radius: 14px;
+
+    background: rgba(255,255,255,0.05);
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+}
+
+.setor-box small {
+    display: block;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+
+    margin-bottom: 5px;
+}
+
+.setor-box strong {
+    font-size: 14px;
+    color: white;
+}
+
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+.main {
+    margin-left: 265px;
+
+    min-height: 100vh;
+
+    padding: 30px;
+}
+
+
+/* =====================================================
+   TOPBAR
+===================================================== */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+
+    margin-bottom: 28px;
+}
+
+.topbar h1 {
+    margin: 0 0 6px;
+
+    font-size: 32px;
+}
+
+.topbar p {
+    margin: 0;
+
+    color: #94a3b8;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 10px 14px;
+
+    border-radius: 14px;
+
+    background: rgba(255,255,255,0.06);
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+}
+
+.avatar {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #7c3aed
+        );
+
+    font-weight: bold;
+}
+
+.profile strong {
+    display: block;
+    font-size: 14px;
+}
+
+.profile small {
+    color: #94a3b8;
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+.logout {
+    margin-top: 12px;
+
+    width: 100%;
+
+    padding: 10px 12px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: rgba(220,38,38,0.10);
+
+    color: #fca5a5;
+
+    cursor: pointer;
+}
+
+.logout:hover {
+    background: rgba(220,38,38,0.18);
+}
+
+
+/* =====================================================
+   CARDS
+===================================================== */
+
+.cards {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 25px;
+}
+
+.card {
+    padding: 20px;
+
+    border-radius: 18px;
+
+    background:
+        rgba(255,255,255,0.055);
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+
+    backdrop-filter: blur(14px);
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+
+    background:
+        rgba(255,255,255,0.08);
+}
+
+.card > span {
+    font-size: 24px;
+}
+
+.card p {
+    margin: 15px 0 5px;
+
+    color: #94a3b8;
+}
+
+.card h2 {
+    margin: 0;
+
+    font-size: 27px;
+}
+
+
+/* =====================================================
+   WELCOME
+===================================================== */
+
+.welcome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 30px;
+
+    margin-bottom: 25px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(37,99,235,0.18),
+            rgba(124,58,237,0.14)
+        );
+
+    border:
+        1px solid rgba(96,165,250,0.15);
+
+    overflow: hidden;
+}
+
+.tag {
+    display: inline-block;
+
+    padding: 7px 10px;
+
+    border-radius: 20px;
+
+    background: rgba(255,255,255,0.08);
+
+    color: #bfdbfe;
+
+    font-size: 10px;
+    letter-spacing: 1.4px;
+}
+
+.welcome h2 {
+    margin: 15px 0 10px;
+
+    font-size: 30px;
+
+    max-width: 600px;
+}
+
+.welcome p {
+    margin: 0;
+
+    color: #cbd5e1;
+
+    max-width: 650px;
+
+    line-height: 1.6;
+}
+
+.welcome-icon {
+    width: 120px;
+    height: 120px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #7c3aed
+        );
+
+    font-size: 24px;
+    font-weight: bold;
+
+    box-shadow:
+        0 20px 50px rgba(37,99,235,0.25);
+}
+
+
+/* =====================================================
+   QUICK
+===================================================== */
+
+.quick {
+    margin-bottom: 25px;
+}
+
+.quick h2,
+.team-preview h2 {
+    margin-top: 0;
+}
+
+.quick-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 15px;
+}
+
+.quick-grid button {
+    min-height: 135px;
+
+    text-align: left;
+
+    padding: 18px;
+
+    border-radius: 16px;
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+
+    background:
+        rgba(255,255,255,0.045);
+
+    color: white;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease;
+}
+
+.quick-grid button:hover {
+    transform: translateY(-3px);
+
+    background:
+        rgba(255,255,255,0.08);
+}
+
+.quick-grid button > span {
+    display: block;
+}
+
+.quick-grid strong {
+    display: block;
+
+    margin-top: 15px;
+
+    font-size: 14px;
+}
+
+.quick-grid small {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #94a3b8;
+}
+
+
+/* =====================================================
+   TEAM PREVIEW
+===================================================== */
+
+.team-preview {
+    padding: 22px;
+
+    border-radius: 18px;
+
+    background:
+        rgba(255,255,255,0.045);
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    align-items: center;
+}
+
+.section-header p {
+    color: #94a3b8;
+}
+
+.section-header button {
+    border: 0;
+
+    padding: 11px 15px;
+
+    border-radius: 9px;
+
+    background: #2563eb;
+
+    color: white;
+
+    cursor: pointer;
+}
+
+.empty {
+    margin-top: 20px;
+
+    padding: 35px;
+
+    text-align: center;
+
+    border-radius: 14px;
+
+    background:
+        rgba(255,255,255,0.03);
+}
+
+.empty > div {
+    font-size: 36px;
+}
+
+.empty h3 {
+    margin-bottom: 5px;
+}
+
+.empty p {
+    color: #94a3b8;
+}
+
+
+/* =====================================================
+   MENSAGEM DE CARREGAMENTO
+===================================================== */
+
+#carregando {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        #020617;
+
+    z-index: 9999;
+
+    font-size: 16px;
+
+    color: #cbd5e1;
+}
+
+
+/* =====================================================
+   RESPONSIVO
+===================================================== */
+
+@media (max-width: 1100px) {
+
+    .cards {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .quick-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 800px) {
+
+    .sidebar {
+        position: relative;
+
+        width: 100%;
+        height: auto;
+
+        border-right: 0;
+        border-bottom:
+            1px solid rgba(255,255,255,0.08);
+    }
+
+    .main {
+        margin-left: 0;
+    }
+
+    .topbar,
+    .welcome {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+}
+
+@media (max-width: 550px) {
+
+    .main {
+        padding: 18px;
+    }
+
+    .cards,
+    .quick-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .topbar h1 {
+        font-size: 26px;
+    }
+
+    .profile {
+        width: 100%;
+    }
+
+}
+
+</style>
+
 </head>
 
 <body>
 
-<div class="app">
+<div id="carregando">
+    Verificando acesso...
+</div>
+
+<div class="app" style="display:none;" id="app">
+
+```
+<!-- =================================================
+     SIDEBAR
+================================================== -->
 
 <aside class="sidebar">
 
-<div class="brand">
-<span>IMA</span>
-DIGITAIS
-</div>
+    <div class="brand">
+        <span>IMA</span>
+        DIGITAIS
+    </div>
 
-<p class="menu-title">MENU PRINCIPAL</p>
 
-<a href="#" class="active">📊 Dashboard</a>
-<a href="equipa.html">👥 Equipa</a>
-<a href="design.html">🎨 Design</a>
-<a href="web.html">🌐 Web</a>
-<a href="marketing.html">📱 Marketing</a>
-<a href="clientes.html">💼 Clientes</a>
-<a href="portfólio.html">🖼️ Portfólio</a>
-<a href="conteudo.html">📢 Conteúdo</a>
-<a href="redes.html">🌐 Redes Sociais</a>
-<p class="menu-title">SISTEMA</p>
+    <p class="menu-title">
+        MENU PRINCIPAL
+    </p>
 
-<a href="#">⚙️ Configurações</a>
+
+    <a
+        href="admin.html"
+        class="active"
+    >
+        📊 Dashboard
+    </a>
+
+
+    <a
+        href="equipa.html"
+    >
+        👥 Equipa
+    </a>
+
+
+    <!-- ADMIN -->
+    <a
+        href="design.html"
+        class="link-admin link-design"
+    >
+        🎨 Design
+    </a>
+
+    <a
+        href="web.html"
+        class="link-admin link-web"
+    >
+        🌐 Web
+    </a>
+
+    <a
+        href="marketing.html"
+        class="link-admin link-marketing"
+    >
+        📱 Marketing
+    </a>
+
+    <a
+        href="clientes.html"
+        class="link-admin link-clientes"
+    >
+        💼 Clientes / Comércio
+    </a>
+
+
+    <a
+        href="portfólio.html"
+        class="link-admin"
+    >
+        🖼️ Portfólio
+    </a>
+
+
+    <a
+        href="conteudo.html"
+        class="link-admin"
+    >
+        📢 Conteúdo
+    </a>
+
+
+    <a
+        href="redes.html"
+        class="link-admin"
+    >
+        🌐 Redes Sociais
+    </a>
+
+
+    <p class="menu-title">
+        SISTEMA
+    </p>
+
+
+    <a href="admin.html">
+        ⚙️ Configurações
+    </a>
+
+
+    <div class="setor-box">
+
+        <small>
+            ACESSO ATUAL
+        </small>
+
+        <strong id="setorUsuario">
+            Verificando...
+        </strong>
+
+    </div>
+
+
+    <button
+        class="logout"
+        onclick="sair()"
+    >
+        🚪 Sair da conta
+    </button>
 
 </aside>
 
 
+<!-- =================================================
+     MAIN
+================================================== -->
+
 <main class="main">
 
-<header class="topbar">
 
-<div>
-<h1>Dashboard</h1>
-<p>Bem-vindo ao painel da IMA Digitais Soluções.</p>
-</div>
+    <header class="topbar">
 
-<div class="profile">
-<div class="avatar">I</div>
-<div>
-<strong>Administrador</strong>
-<small>Direção</small>
-</div>
-</div>
+        <div>
 
-</header>
+            <h1 id="tituloDashboard">
+                Dashboard
+            </h1>
+
+            <p id="subtituloDashboard">
+                Bem-vindo ao painel da IMA Digitais Soluções.
+            </p>
+
+        </div>
 
 
-<section class="cards">
+        <div class="profile">
 
-<div class="card">
-<span>👥</span>
-<p>Clientes</p>
-<h2>0</h2>
-</div>
-
-<div class="card">
-<span>📁</span>
-<p>Projetos</p>
-<h2>0</h2>
-</div>
-
-<div class="card">
-<span>👨‍💻</span>
-<p>Equipa</p>
-<h2>0</h2>
-</div>
-
-<div class="card">
-<span>💰</span>
-<p>Faturamento</p>
-<h2>0 Kz</h2>
-</div>
-
-</section>
+            <div
+                class="avatar"
+                id="avatar"
+            >
+                I
+            </div>
 
 
-<section class="welcome">
+            <div>
 
-<div>
+                <strong id="nomeUsuario">
+                    Administrador
+                </strong>
 
-<span class="tag">CENTRAL DA IMA</span>
+                <small id="cargoUsuario">
+                    Administração
+                </small>
 
-<h2>
-Organize o seu negócio
-em um só lugar.
-</h2>
+            </div>
 
-<p>
-Gerencie clientes, projetos, equipa,
-serviços e trabalhos da IMA Digitais
-Soluções.
-</p>
+        </div>
 
-</div>
-
-<div class="welcome-icon">
-IMA
-</div>
-
-</section>
+    </header>
 
 
-<section class="quick">
+    <!-- =================================================
+         CARDS
+    ================================================== -->
 
-<h2>Acesso rápido</h2>
+    <section class="cards">
 
-<div class="quick-grid">
+        <div class="card">
 
-<button onclick="window.location.href='equipa.html'">
-👥
-<strong>Adicionar membro</strong>
-<small>Registar alguém da equipa</small>
-</button>
-<button onclick="abrirClientes()">
-💼
-<strong>Novo cliente</strong>
-<small>Adicionar cliente</small>
-</button>
+            <span>👥</span>
 
-<button onclick="window.location.href='projetos.html'">
-📁
-<strong>Novo projeto</strong>
-<small>Criar projeto</small>
-</button>
+            <p>
+                Clientes
+            </p>
 
-<button>
-🖼️
-<strong>Novo trabalho</strong>
-<small>Adicionar ao portfólio</small>
-</button>
+            <h2>
+                2
+            </h2>
 
-</div>
-
-</section>
+        </div>
 
 
-<section class="team-preview">
+        <div class="card">
 
-<div class="section-header">
+            <span>📁</span>
 
-<div>
-<h2>Equipa</h2>
-<p>Membros da equipa aparecerão aqui.</p>
-</div>
-<button onclick="window.location.href='equipa.html'">
-+ Adicionar membro
-</button>
+            <p>
+                Projetos
+            </p>
 
-</div>
+            <h2>
+                2
+            </h2>
+
+        </div>
 
 
-<div class="empty">
+        <div class="card">
 
-<div>👥</div>
+            <span>👨‍💻</span>
 
-<h3>A equipa ainda não foi cadastrada</h3>
+            <p>
+                Equipa
+            </p>
 
-<p>
-Em breve vamos adicionar os setores,
-cargos e membros da sua equipa.
-</p>
+            <h2>
+                1
+            </h2>
 
-</div>
+        </div>
 
-</section>
 
+        <div class="card">
+
+            <span>💰</span>
+
+            <p>
+                Faturamento
+            </p>
+
+            <h2>
+                60.000 Kz
+            </h2>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         WELCOME
+    ================================================== -->
+
+    <section class="welcome">
+
+        <div>
+
+            <span class="tag" id="tagSetor">
+                CENTRAL DA IMA
+            </span>
+
+
+            <h2 id="tituloWelcome">
+                Organize o seu negócio
+                em um só lugar.
+            </h2>
+
+
+            <p id="textoWelcome">
+                Gerencie clientes, projetos,
+                equipa, serviços e trabalhos
+                da IMA Digitais Soluções.
+            </p>
+
+        </div>
+
+
+        <div class="welcome-icon">
+            IMA
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         ACESSO RÁPIDO
+    ================================================== -->
+
+    <section class="quick">
+
+        <h2>
+            Acesso rápido
+        </h2>
+
+
+        <div class="quick-grid">
+
+
+            <button
+                onclick="abrirPagina('equipa.html')"
+            >
+                👥
+
+                <strong>
+                    Equipa
+                </strong>
+
+                <small>
+                    Gerir membros da equipa
+                </small>
+
+            </button>
+
+
+            <button
+                class="quick-design"
+                onclick="abrirPagina('design.html')"
+            >
+                🎨
+
+                <strong>
+                    Design
+                </strong>
+
+                <small>
+                    Trabalhos de design
+                </small>
+
+            </button>
+
+
+            <button
+                class="quick-web"
+                onclick="abrirPagina('web.html')"
+            >
+                🌐
+
+                <strong>
+                    Web
+                </strong>
+
+                <small>
+                    Projetos Web
+                </small>
+
+            </button>
+
+
+            <button
+                class="quick-marketing"
+                onclick="abrirPagina('marketing.html')"
+            >
+                📱
+
+                <strong>
+                    Marketing
+                </strong>
+
+                <small>
+                    Campanhas e marketing
+                </small>
+
+            </button>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         EQUIPA
+    ================================================== -->
+
+    <section class="team-preview">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2>
+                    Equipa
+                </h2>
+
+                <p id="textoEquipe">
+                    Membros da equipa aparecerão aqui.
+                </p>
+
+            </div>
+
+
+            <button
+                onclick="abrirPagina('equipa.html')"
+            >
+                + Adicionar membro
+            </button>
+
+        </div>
+
+
+        <div class="empty">
+
+            <div>
+                👥
+            </div>
+
+            <h3 id="mensagemEquipe">
+                Gestão da equipa
+            </h3>
+
+            <p>
+                Utilize o menu lateral para acessar
+                os módulos autorizados.
+            </p>
+
+        </div>
+
+    </section>
 
 </main>
-</div>
-<script>
-function abrirClientes() {
-    window.location.href = "clientes.html";
-}
-</script>
+```
 
-<script src="supabase.js"></script>
+</div>
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+"https://vzqndrnwgpvbawjuezsd.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_Ob3owo-lP6TCJbnTPW7Ecg_wyvaoEps";
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+/* =====================================================
+   ELEMENTOS
+===================================================== */
+
+const carregando =
+document.getElementById("carregando");
+
+const app =
+document.getElementById("app");
+
+
+/* =====================================================
+   INICIAR PAINEL
+===================================================== */
+
+async function iniciarPainel() {
+
+    try {
+
+        /*
+         * Verificar sessão atual
+         */
+
+        const {
+            data: sessionData,
+            error: sessionError
+        } =
+            await supabaseClient.auth.getSession();
+
+
+        if (sessionError) {
+
+            console.error(sessionError);
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        if (!sessionData.session) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        const usuario =
+            sessionData.session.user;
+
+
+        /*
+         * Buscar perfil do usuário
+         */
+
+        const {
+            data: perfil,
+            error: perfilError
+        } =
+            await supabaseClient
+                .from("perfis")
+                .select("id,nome,email,setor")
+                .eq("id", usuario.id)
+                .maybeSingle();
+
+
+        if (perfilError) {
+
+            console.error(
+                "Erro ao consultar perfil:",
+                perfilError
+            );
+
+            alert(
+                "Erro ao consultar o perfil."
+            );
+
+            await supabaseClient.auth.signOut();
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        if (!perfil) {
+
+            alert(
+                "Usuário sem perfil configurado."
+            );
+
+            await supabaseClient.auth.signOut();
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        configurarInterface(
+            usuario,
+            perfil
+        );
+
+
+        carregando.style.display =
+            "none";
+
+        app.style.display =
+            "block";
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro:",
+            erro
+        );
+
+        window.location.href =
+            "login.html";
+    }
+
+}
+
+
+/* =====================================================
+   CONFIGURAR INTERFACE
+===================================================== */
+
+function configurarInterface(
+    usuario,
+    perfil
+) {
+
+    const setor =
+        perfil.setor || "Sem setor";
+
+
+    const setorNormalizado =
+        setor
+            .toLowerCase()
+            .trim();
+
+
+    const nome =
+        perfil.nome ||
+        usuario.email ||
+        "Usuário";
+
+
+    /*
+     * Nome
+     */
+
+    document
+        .getElementById("nomeUsuario")
+        .textContent =
+            nome;
+
+
+    /*
+     * Setor
+     */
+
+    document
+        .getElementById("setorUsuario")
+        .textContent =
+            setor;
+
+
+    /*
+     * Avatar
+     */
+
+    document
+        .getElementById("avatar")
+        .textContent =
+            nome
+                .charAt(0)
+                .toUpperCase();
+
+
+    /*
+     * Cargo
+     */
+
+    document
+        .getElementById("cargoUsuario")
+        .textContent =
+            setor;
+
+
+    /*
+     * Administrador
+     */
+
+    if (
+        setorNormalizado ===
+        "administrador"
+    ) {
+
+        configurarAdministrador();
+
+        return;
+    }
+
+
+    /*
+     * DESIGN
+     */
+
+    if (
+        setorNormalizado ===
+        "design"
+    ) {
+
+        configurarSetor(
+            "🎨 Área de Design",
+            "Bem-vindo ao setor de Design da IMA Digitais.",
+            "DESIGN"
+        );
+
+        mostrarSomente(
+            "design"
+        );
+
+        return;
+    }
+
+
+    /*
+     * WEB
+     */
+
+    if (
+        setorNormalizado ===
+        "web"
+    ) {
+
+        configurarSetor(
+            "🌐 Área Web",
+            "Bem-vindo ao setor Web da IMA Digitais.",
+            "WEB"
+        );
+
+        mostrarSomente(
+            "web"
+        );
+
+        return;
+    }
+
+
+    /*
+     * MARKETING
+     */
+
+    if (
+        setorNormalizado ===
+        "marketing"
+    ) {
+
+        configurarSetor(
+            "📱 Área de Marketing",
+            "Bem-vindo ao setor de Marketing da IMA Digitais.",
+            "MARKETING"
+        );
+
+        mostrarSomente(
+            "marketing"
+        );
+
+        return;
+    }
+
+
+    /*
+     * CLIENTES / COMÉRCIO
+     */
+
+    if (
+        setorNormalizado ===
+        "clientes" ||
+        setorNormalizado ===
+        "clientes/comércio"
+    ) {
+
+        configurarSetor(
+            "💼 Área de Clientes / Comércio",
+            "Bem-vindo ao setor de Clientes e Comércio da IMA Digitais.",
+            "CLIENTES / COMÉRCIO"
+        );
+
+        mostrarSomente(
+            "clientes"
+        );
+
+        return;
+    }
+
+}
+
+
+/* =====================================================
+   ADMINISTRADOR
+===================================================== */
+
+function configurarAdministrador() {
+
+    document
+        .getElementById("tituloDashboard")
+        .textContent =
+            "Dashboard Administrativo";
+
+
+    document
+        .getElementById("subtituloDashboard")
+        .textContent =
+            "Controle central da IMA Digitais Soluções.";
+
+
+    document
+        .getElementById("tagSetor")
+        .textContent =
+            "CENTRAL ADMINISTRATIVA";
+
+
+    document
+        .getElementById("tituloWelcome")
+        .textContent =
+            "Controle toda a IMA em um só lugar.";
+
+
+    document
+        .getElementById("textoWelcome")
+        .textContent =
+            "Você possui acesso administrativo aos setores Design, Web, Marketing e Clientes/Comércio.";
+
+
+    document
+        .getElementById("mensagemEquipe")
+        .textContent =
+            "Administrador com acesso total";
+
+
+    /*
+     * Mostrar todos os links administrativos
+     */
+
+    document
+        .querySelectorAll(".link-admin")
+        .forEach(link => {
+
+            link.style.display =
+                "flex";
+
+        });
+
+}
+
+
+/* =====================================================
+   CONFIGURAR SETOR
+===================================================== */
+
+function configurarSetor(
+    titulo,
+    texto,
+    etiqueta
+) {
+
+    document
+        .getElementById("tituloDashboard")
+        .textContent =
+            titulo;
+
+
+    document
+        .getElementById("subtituloDashboard")
+        .textContent =
+            "Área restrita do seu setor.";
+
+
+    document
+        .getElementById("tagSetor")
+        .textContent =
+            etiqueta;
+
+
+    document
+        .getElementById("tituloWelcome")
+        .textContent =
+            "Bem-vindo à sua área de trabalho.";
+
+
+    document
+        .getElementById("textoWelcome")
+        .textContent =
+            texto;
+
+
+    document
+        .getElementById("textoEquipe")
+        .textContent =
+            "Acesso restrito aos recursos autorizados para o seu setor.";
+
+
+    /*
+     * Esconder cards gerais
+     */
+
+    document
+        .querySelector(".cards")
+        .style.display =
+            "none";
+
+
+    /*
+     * Esconder equipa para usuários dos setores
+     */
+
+    document
+        .getElementById("textoEquipe")
+        .closest(".team-preview")
+        .style.display =
+            "none";
+
+}
+
+
+/* =====================================================
+   MOSTRAR SOMENTE UM SETOR
+===================================================== */
+
+function mostrarSomente(
+    setor
+) {
+
+    /*
+     * Esconder todos os links administrativos
+     */
+
+    document
+        .querySelectorAll(".link-admin")
+        .forEach(link => {
+
+            link.style.display =
+                "none";
+
+        });
+
+
+    /*
+     * Esconder atalhos
+     */
+
+    document
+        .querySelectorAll(
+            ".quick-design, .quick-web, .quick-marketing"
+        )
+        .forEach(botao => {
+
+            botao.style.display =
+                "none";
+
+        });
+
+
+    /*
+     * Mostrar somente o setor autorizado
+     */
+
+    const link =
+        document.querySelector(
+            ".link-" + setor
+        );
+
+
+    if (link) {
+
+        link.style.display =
+            "flex";
+
+    }
+
+
+    const quick =
+        document.querySelector(
+            ".quick-" + setor
+        );
+
+
+    if (quick) {
+
+        quick.style.display =
+            "block";
+
+    }
+
+}
+
+
+/* =====================================================
+   ABRIR PÁGINA
+===================================================== */
+
+function abrirPagina(
+    pagina
+) {
+
+    window.location.href =
+        pagina;
+
+}
+
+
+/* =====================================================
+   SAIR
+===================================================== */
+
+async function sair() {
+
+    const confirmar =
+        confirm(
+            "Deseja realmente sair da sua conta?"
+        );
+
+
+    if (!confirmar) {
+
+        return;
+    }
+
+
+    await supabaseClient.auth.signOut();
+
+
+    sessionStorage.clear();
+
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+iniciarPainel();
+
+</script>
 
 </body>
 </html>
