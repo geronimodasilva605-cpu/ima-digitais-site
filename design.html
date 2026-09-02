@@ -2,11 +2,8 @@
 
 <html lang="pt">
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Design - IMA Digitais</title>
 
@@ -19,8 +16,8 @@ content="width=device-width, initial-scale=1.0">
 }
 
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
     background:
         linear-gradient(135deg, #eef2ff, #f8fafc);
     color: #222;
@@ -57,7 +54,6 @@ body {
     justify-content: space-between;
     align-items: center;
     gap: 15px;
-
     margin-bottom: 25px;
 }
 
@@ -65,17 +61,23 @@ body {
     margin: 0;
 }
 
+.usuario {
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.usuario strong {
+    color: #2563eb;
+}
+
 button {
     border: 0;
-
     padding: 10px 15px;
-
     border-radius: 8px;
-
     cursor: pointer;
-
-    background: #111;
     color: white;
+    font-size: 14px;
 }
 
 button:hover {
@@ -101,32 +103,20 @@ button:hover {
 .formulario,
 .designs {
     background: white;
-
     padding: 25px;
-
     border-radius: 12px;
-
     margin-bottom: 25px;
-
-    box-shadow:
-        0 5px 20px rgba(0,0,0,0.05);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
 }
 
 input,
 textarea,
 select {
     width: 100%;
-
-    box-sizing: border-box;
-
     padding: 12px;
-
     margin: 8px 0 15px;
-
     border: 1px solid #ccc;
-
     border-radius: 7px;
-
     font-size: 15px;
 }
 
@@ -135,9 +125,12 @@ textarea {
     resize: vertical;
 }
 
+.botao-principal {
+    background: #111;
+}
+
 .design {
     padding: 18px 0;
-
     border-bottom: 1px solid #ddd;
 }
 
@@ -147,46 +140,36 @@ textarea {
 
 .design strong {
     display: block;
-
     font-size: 19px;
-
     margin-bottom: 7px;
 }
 
 .design span {
     display: block;
-
-    margin: 4px 0;
+    margin: 5px 0;
 }
 
 .acoes {
     margin-top: 12px;
-
     display: flex;
-
     gap: 8px;
-
     flex-wrap: wrap;
 }
 
-.erro {
-    text-align: center;
-
-    padding: 35px;
-
-    color: #b91c1c;
+.mensagem {
+    padding: 15px;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #64748b;
 }
 
-.usuario {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.acesso-negado {
+    text-align: center;
+    padding: 30px;
+}
 
-    margin-top: 8px;
-
-    color: #64748b;
-
-    font-size: 13px;
+.acesso-negado h2 {
+    color: #dc2626;
 }
 
 @media (max-width: 600px) {
@@ -205,6 +188,10 @@ textarea {
         width: 100%;
     }
 
+    .formulario,
+    .designs {
+        padding: 18px;
+    }
 }
 
 </style>
@@ -213,41 +200,38 @@ textarea {
 
 <body>
 
-<!-- TELA DE VERIFICAÇÃO -->
-
 <div id="carregando">
     🔐 Verificando acesso...
 </div>
-
-<!-- CONTEÚDO DA PÁGINA -->
 
 <div id="conteudoPagina">
 
 <div class="container">
 
 ```
+<!-- TOPO -->
+
 <div class="topo">
 
     <div>
 
-        <h1>
-            🎨 Design IMA
-        </h1>
+        <h1>🎨 Design IMA</h1>
 
         <div class="usuario">
-
-            <span>
-                Acesso:
-            </span>
-
-            <strong id="setorUsuario">
-                Design
+            Usuário:
+            <strong id="nomeUsuario">
+                ...
             </strong>
 
+            |
+            
+            Setor:
+            <strong id="setorUsuario">
+                ...
+            </strong>
         </div>
 
     </div>
-
 
     <button
         class="voltar"
@@ -267,20 +251,17 @@ textarea {
         Novo trabalho de Design
     </h2>
 
-
     <input
         id="nome"
         type="text"
         placeholder="Nome do trabalho"
     >
 
-
     <input
         id="cliente"
         type="text"
         placeholder="Nome do cliente"
     >
-
 
     <select id="tipo">
 
@@ -310,20 +291,17 @@ textarea {
 
     </select>
 
-
     <textarea
         id="descricao"
         placeholder="Descrição do trabalho"
     ></textarea>
 
-
     <input
         id="valor"
         type="number"
-        placeholder="Valor em Kz"
         min="0"
+        placeholder="Valor em Kz"
     >
-
 
     <select id="status">
 
@@ -341,14 +319,13 @@ textarea {
 
     </select>
 
-
     <button
         id="botaoSalvar"
+        class="botao-principal"
         onclick="adicionarDesign()"
     >
         Adicionar trabalho
     </button>
-
 
     <button
         id="botaoCancelar"
@@ -370,7 +347,6 @@ textarea {
         Trabalhos de Design cadastrados
     </h2>
 
-
     <div id="listaDesign">
         Carregando trabalhos...
     </div>
@@ -389,17 +365,21 @@ textarea {
 ===================================================== */
 
 const SUPABASE_URL =
-"https://vzqndrnwgpvbawjuezsd.supabase.co";
+    "https://vzqndrnwgpvbawjuezsd.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_Ob3owo-lP6TCJbnTPW7Ecg_wyvaoEps";
+    "sb_publishable_Ob3owo-lP6TCJbnTPW7Ecg_wyvaoEps";
 
 const supabaseClient =
-window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
+
+/* =====================================================
+   VARIÁVEIS
+===================================================== */
 
 let designEditando = null;
 
@@ -413,10 +393,10 @@ let perfilAtual = null;
 ===================================================== */
 
 const carregando =
-document.getElementById("carregando");
+    document.getElementById("carregando");
 
 const conteudoPagina =
-document.getElementById("conteudoPagina");
+    document.getElementById("conteudoPagina");
 
 
 /* =====================================================
@@ -459,9 +439,7 @@ async function verificarAcesso() {
             sessaoData.session.user;
 
 
-        /* =============================================
-           BUSCAR PERFIL
-        ============================================= */
+        /* Buscar perfil */
 
         const {
             data: perfil,
@@ -469,8 +447,13 @@ async function verificarAcesso() {
         } =
             await supabaseClient
                 .from("perfis")
-                .select("id,nome,email,setor")
-                .eq("id", usuarioAtual.id)
+                .select(
+                    "id,nome,email,setor"
+                )
+                .eq(
+                    "id",
+                    usuarioAtual.id
+                )
                 .maybeSingle();
 
 
@@ -482,7 +465,7 @@ async function verificarAcesso() {
             );
 
             bloquearAcesso(
-                "Não foi possível verificar o seu perfil."
+                "Erro ao consultar o seu perfil."
             );
 
             return;
@@ -509,16 +492,12 @@ async function verificarAcesso() {
                 .trim();
 
 
-        /* =============================================
-           PERMISSÃO
-        ============================================= */
+        /* Permitir Design ou Administrador */
 
-        const permitido =
-            setor === "design" ||
-            setor === "administrador";
-
-
-        if (!permitido) {
+        if (
+            setor !== "design" &&
+            setor !== "administrador"
+        ) {
 
             bloquearAcesso(
                 "🚫 Acesso negado. Esta área é exclusiva do setor Design."
@@ -528,9 +507,14 @@ async function verificarAcesso() {
         }
 
 
-        /* =============================================
-           MOSTRAR PÁGINA
-        ============================================= */
+        /* Mostrar usuário */
+
+        document
+            .getElementById("nomeUsuario")
+            .textContent =
+                perfil.nome ||
+                usuarioAtual.email;
+
 
         document
             .getElementById("setorUsuario")
@@ -538,9 +522,10 @@ async function verificarAcesso() {
                 perfil.setor;
 
 
+        /* Mostrar página */
+
         carregando.style.display =
             "none";
-
 
         conteudoPagina.style.display =
             "block";
@@ -553,55 +538,47 @@ async function verificarAcesso() {
         console.error(erro);
 
         bloquearAcesso(
-            "Erro inesperado ao verificar o acesso."
+            "Erro inesperado."
         );
-
     }
 
 }
 
 
 /* =====================================================
-   BLOQUEAR
+   BLOQUEAR ACESSO
 ===================================================== */
 
-function bloquearAcesso(
-    mensagem
-) {
+function bloquearAcesso(mensagem) {
 
     carregando.innerHTML = `
-        <div style="
-            text-align:center;
-            padding:20px;
-        ">
-            <div style="
-                font-size:50px;
-                margin-bottom:15px;
-            ">
+
+        <div class="acesso-negado">
+
+            <div style="font-size:50px;">
                 🔒
             </div>
 
-            <div style="
-                font-size:18px;
-                margin-bottom:20px;
-            ">
+            <h2>
+                Acesso bloqueado
+            </h2>
+
+            <p>
                 ${mensagem}
-            </div>
+            </p>
 
             <button
                 onclick="window.location.href='admin.html'"
                 style="
                     background:#2563eb;
-                    padding:12px 18px;
-                    border:0;
-                    border-radius:8px;
-                    color:white;
-                    cursor:pointer;
+                    margin-top:15px;
                 "
             >
                 ← Voltar ao Dashboard
             </button>
+
         </div>
+
     `;
 
 }
@@ -620,7 +597,7 @@ async function carregarDesign() {
 
 
     lista.innerHTML =
-        "Carregando trabalhos...";
+        '<div class="mensagem">Carregando trabalhos...</div>';
 
 
     const {
@@ -650,7 +627,7 @@ async function carregarDesign() {
     if (!data || data.length === 0) {
 
         lista.innerHTML =
-            "Nenhum trabalho de Design cadastrado ainda.";
+            '<div class="mensagem">Nenhum trabalho de Design cadastrado ainda.</div>';
 
         return;
     }
@@ -718,7 +695,6 @@ async function carregarDesign() {
                 </button>
 
             </div>
-
         `;
 
 
@@ -730,38 +706,57 @@ async function carregarDesign() {
 
 
 /* =====================================================
-   ADICIONAR
+   ADICIONAR DESIGN
 ===================================================== */
 
 async function adicionarDesign() {
 
+    if (!usuarioAtual) {
+
+        alert(
+            "Sua sessão expirou. Faça login novamente."
+        );
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
     const nome =
-        document.getElementById("nome")
+        document
+            .getElementById("nome")
             .value.trim();
 
 
     const cliente =
-        document.getElementById("cliente")
+        document
+            .getElementById("cliente")
             .value.trim();
 
 
     const tipo =
-        document.getElementById("tipo")
+        document
+            .getElementById("tipo")
             .value;
 
 
     const descricao =
-        document.getElementById("descricao")
+        document
+            .getElementById("descricao")
             .value.trim();
 
 
     const valor =
-        document.getElementById("valor")
+        document
+            .getElementById("valor")
             .value;
 
 
     const status =
-        document.getElementById("status")
+        document
+            .getElementById("status")
             .value;
 
 
@@ -774,20 +769,6 @@ async function adicionarDesign() {
         return;
     }
 
-
-    if (!usuarioAtual) {
-
-        alert(
-            "Sessão do usuário não encontrada."
-        );
-
-        return;
-    }
-
-
-    /* =============================================
-       GRAVAR COM O ID DO USUÁRIO
-    ============================================= */
 
     const {
         error
@@ -835,7 +816,6 @@ async function adicionarDesign() {
 
     limparFormulario();
 
-
     carregarDesign();
 
 }
@@ -854,7 +834,10 @@ async function editarDesign(id) {
         await supabaseClient
             .from("design")
             .select("*")
-            .eq("id", id)
+            .eq(
+                "id",
+                id
+            )
             .single();
 
 
@@ -937,32 +920,38 @@ async function editarDesign(id) {
 async function salvarEdicao() {
 
     const nome =
-        document.getElementById("nome")
+        document
+            .getElementById("nome")
             .value.trim();
 
 
     const cliente =
-        document.getElementById("cliente")
+        document
+            .getElementById("cliente")
             .value.trim();
 
 
     const tipo =
-        document.getElementById("tipo")
+        document
+            .getElementById("tipo")
             .value;
 
 
     const descricao =
-        document.getElementById("descricao")
+        document
+            .getElementById("descricao")
             .value.trim();
 
 
     const valor =
-        document.getElementById("valor")
+        document
+            .getElementById("valor")
             .value;
 
 
     const status =
-        document.getElementById("status")
+        document
+            .getElementById("status")
             .value;
 
 
@@ -970,6 +959,16 @@ async function salvarEdicao() {
 
         alert(
             "Digite o nome do trabalho."
+        );
+
+        return;
+    }
+
+
+    if (!designEditando) {
+
+        alert(
+            "Nenhum trabalho selecionado."
         );
 
         return;
@@ -1023,7 +1022,6 @@ async function salvarEdicao() {
 
     cancelarEdicao();
 
-
     carregarDesign();
 
 }
@@ -1042,7 +1040,6 @@ async function excluirDesign(id) {
 
 
     if (!confirmar) {
-
         return;
     }
 
@@ -1090,7 +1087,6 @@ function cancelarEdicao() {
 
     designEditando = null;
 
-
     limparFormulario();
 
 
@@ -1129,22 +1125,17 @@ function limparFormulario() {
     document.getElementById("nome")
         .value = "";
 
-
     document.getElementById("cliente")
         .value = "";
-
 
     document.getElementById("tipo")
         .value = "Logotipo";
 
-
     document.getElementById("descricao")
         .value = "";
 
-
     document.getElementById("valor")
         .value = "";
-
 
     document.getElementById("status")
         .value =
@@ -1166,7 +1157,7 @@ function voltarDashboard() {
 
 
 /* =====================================================
-   ESCAPAR HTML
+   SEGURANÇA CONTRA HTML
 ===================================================== */
 
 function escaparHTML(texto) {
